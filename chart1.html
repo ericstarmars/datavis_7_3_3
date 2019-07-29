@@ -10,36 +10,72 @@
 <p>What is the reason behind the change? What makes the drop of lung/bronchus cancer rate? Click <b>"Next"</b> for more info.</p>	
 </div>
 <div style="margin-left:30px; height:100%; float:left">
-<svg width=300 height=300>
+<svg width=870 height=460>
 </svg>
 <script>
 async function init() {
-var margin = 50;
-var int_width = 200;
-var int_height = 200;
-var cx = d3.scaleLog().domain([10,150]).range([0,int_width]);
-var cy = d3.scaleLog().domain([10,150]).range([int_height,0]);
-const data = await d3.csv("https://flunky.github.io/cars2017.csv");
-d3.select("svg")
-.append("g")
-.attr("transform", "translate("+margin+","+margin+")")
-.selectAll("circle")
-.data(data)
-.enter()
-.append("circle")
-.attr("cx", function(d,i) {return cx(d.AverageCityMPG);})
-.attr("cy", function(d,i) {return cy(d.AverageHighwayMPG);})
-.attr("r", function(d) {return parseInt(d.EngineCylinders)+2;});
+	const data =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/incident_rate_over_year.csv", d3.autoType)).map(({year_of_disagnose, incident_rate}) => ({year:year_of_disagnose, value: incident_rate})), {x:"Year", y: "Incidents Per 100'000"});
+	var height = 460;
+	var width = 870;
+	var margin1 = ({top: 50, right: 130, bottom: 30, left: 90});
 
-d3.select("svg")
-.append("g")
-.attr("transform", "translate("+margin+","+margin+")")
-.call(d3.axisLeft(cy).tickValues([10,20,50,100]).tickFormat(d3.format("~s")));
+	var x = d3.scaleLinear()
+    .domain(d3.extent(data, d => d.year))
+	.nice()
+    .range([margin1.left, width - margin1.right])
 
-d3.select("svg")
-.append("g")
-.attr("transform", "translate("+margin+","+(margin+int_height)+")")
-.call(d3.axisBottom(cx).tickValues([10,20,50,100]).tickFormat(d3.format("~s")));
+	var yMargin = 5;
+	var y = d3.scaleLinear()
+    .domain([d3.min(data, d => d.value) - yMargin, d3.max(data, d => d.value) + yMargin])
+	.nice()
+    .range([height - margin1.bottom, margin1.top]);
+		
+	var line = d3.line()
+    .defined(d => !isNaN(d.value))
+    .x(d => x(d.year))
+    .y(d => y(d.value));
+
+	var xAxis = g1 => g1
+    .attr("transform", `translate(0,${height - margin1.bottom})`)
+	.style("font-size", "15px")
+    .call(d3.axisBottom(x))
+	.call(g1 => g1.select(".tick:last-of-type text").clone()
+        .attr("x", 60)
+		.attr("y", -5)
+        .attr("text-anchor", "end")
+        .attr("font-weight", "bold")
+		.attr("font-size", "15px")
+        .text(data.x));
+
+	var yAxis = g2 => g2
+    .attr("transform", `translate(${margin1.left},0)`)
+	.style("font-size", "15px")
+    .call(d3.axisLeft(y))
+    .call(g2 => g2.select(".tick:last-of-type text").clone()
+        .attr("y", -20)
+		.attr("x", -50)
+        .attr("text-anchor", "start")
+        .attr("font-weight", "bold")
+		.attr("font-size", "15px")
+        .text(data.y));
+
+	var mysvg = d3.select("svg")
+	.attr("viewBox", [0, 0, width, height]);
+
+	mysvg.append("g")
+		.call(xAxis);
+
+	mysvg.append("g")
+		.call(yAxis);
+	  
+	mysvg.append("path")
+		  .datum(data)
+		  .attr("fill", "none")
+		  .attr("stroke", "steelblue")
+		  .attr("stroke-width", 5)
+		  .attr("stroke-linejoin", "round")
+		  .attr("stroke-linecap", "round")
+		  .attr("d", line);
 }
 </script>
 </div>
