@@ -26,9 +26,10 @@ async function init() {
 	.nice()
     .range([margin1.left, width - margin1.right])
 
-	var yMargin = 5;
+	var yMarginUp = 4;
+	var yMarginDown = 0;
 	var y = d3.scaleLinear()
-    .domain([d3.min(data, d => d.value) - yMargin, d3.max(data, d => d.value) + yMargin])
+    .domain([d3.min(data, d => d.value) - yMarginUp, d3.max(data, d => d.value) + yMarginDown])
 	.nice()
     .range([height - margin1.bottom, margin1.top]);
 		
