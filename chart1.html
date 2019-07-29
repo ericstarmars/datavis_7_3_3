@@ -16,7 +16,7 @@
 async function init() {
 	const data =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/incident_rate_over_year.csv"))
 	.map(({year_of_disagnose, incident_rate}) => 
-	({year:year_of_disagnose, value:incident_rate})), 
+	({year:year_of_disagnose, value:parseFloat(incident_rate)})), 
 	{x:"Year", y: "Incidents Per 100'000"});
 	var height = 480;
 	var width = 900;

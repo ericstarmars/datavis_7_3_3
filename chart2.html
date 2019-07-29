@@ -45,7 +45,7 @@ rect:hover {  fill:blue; }
 async function init() {
 	const data =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/incident_age.csv"))
 	.map(({diagnose_age, incident_cnt}) => 
-	({age:diagnose_age, value:incident_cnt})), 
+	({age:diagnose_age, value:parseFloat(incident_cnt)})), 
 	{x:"Age", y: "Incident Count"});
 	var height = 480;
 	var width = 900;
@@ -57,11 +57,11 @@ async function init() {
 	.attr("viewBox", [0, 0, width, height]);
 	
 	var x = d3.scaleBand()
-		.domain(data.map(function(d) { console.log(d.value); return d.age; }))
+		.domain(data.map(function(d) { return d.age; }))
 		.range([0, innerwidth]);
 
-	var y = d3.scaleLinear()
-		.domain([0, d3.max(data, function(d) {return d.value;})])
+	var y = d3.scaleLog()
+		.domain([0, d3.max(data, d => d.value)])
 		.range([innerheight, 0]);
 	
 	console.log(d3.max(data, function(d) {return d.value;}));
