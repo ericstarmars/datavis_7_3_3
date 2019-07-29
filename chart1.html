@@ -94,14 +94,14 @@ async function init() {
 		.style("stroke-width", 3)
 		.attr("r", 10);
 	myfocus.append("line")
-		.attr("class", "x")
+		.attr("class", "y")
 		.style("stroke", "blue")
 		.style("stroke-dasharray", "3,3")
 		.style("opacity", 0.5)
 		.attr("y1", 0)
 		.attr("y2", innerheight);
 	myfocus.append("line")
-		.attr("class", "y")
+		.attr("class", "x")
 		.style("stroke", "blue")
 		.style("stroke-dasharray", "3,3")
 		.style("opacity", 0.5)
@@ -154,11 +154,11 @@ async function init() {
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
 			.text("Incident rate: " + d.value);
 
-		myfocus.select("line.x")
+		myfocus.select("line.y")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
 			.attr("y2", innerheight - y(d.value));
 
-		myfocus.select("line.y")
+		myfocus.select("line.x")
 			.attr("transform", "translate(" + innerwidth * -1 + "," + y(d.value) + ")")
 			.attr("x2", 2 * innerwidth);
 		

@@ -1,0 +1,248 @@
+<html>
+<script src='https://d3js.org/d3.v5.min.js'></script>
+<body onload="init()">
+<div style="margin-top:5px">
+<div style="margin-left:30px; width:300px; height:100%; float:left">
+<h2>Life Expectancy vs Lung/Bronchus Cancer Rate</h2>
+<p>Here we show the life expectancy change from 1975-2016, along with lung/brochus cancer rate. We can see this that there is growth of life expectancy <b>from lower than 73 to nearly 79</b> during the past 4 decades.</p>
+<p>So based on the relationship of age and cancer rate, we expect to see a growth of Lung/Bronchus Cancer Rate, and this did hold true from 1975-1990.</p>
+<p>But why there is a drop in cancer rate after 1990? Is there are other causes for this change? Click <b>"Next"</b> to dig more.</p>
+<p>Details can be obtained through <b>MouseOver</b> the line.</p>
+</div>
+<div style="margin-left:30px; height:100%; float:left">
+<svg width=800 height=450>
+</svg>
+<script>
+async function init() {
+	const data_nsclc =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/incident_rate_over_year.csv"))
+	.map(({year_of_disagnose, incident_rate}) => 
+	({year:year_of_disagnose, value:parseFloat(incident_rate)})), 
+	{x:"Year", y: "Incidents Per 100'000"});
+	
+	const data_life =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/life_expectancy.csv"))
+	.map(({year, life_exp}) => 
+	({year:year, value:parseFloat(parseFloat(life_exp).toFixed(2))})), 
+	{x:"Year", y: "Life Expectancy"});
+	
+	var height = 450;
+	var width = 800;
+	var margin1 = ({top: 60, right: 120, bottom: 70, left: 90});
+	var innerwidth = width - margin1.left - margin1.right;
+	var innerheight = height - margin1.top - margin1.bottom;
+	
+	var x_nsclc = d3.scaleLinear()
+	.domain(d3.extent(data_nsclc, d => d.year))
+	.nice()
+	.range([0, innerwidth])
+
+	var yMarginUp_nsclc = 5;
+	var yMarginDown_nsclc = 0;
+	var y_nsclc = d3.scaleLinear()
+	.domain([d3.min(data_nsclc, d => d.value) - yMarginUp_nsclc, d3.max(data_nsclc, d => d.value) + yMarginDown_nsclc])
+	.nice()
+	.range([innerheight, 0]);
+	
+	var x_life = d3.scaleLinear()
+	.domain(d3.extent(data_life, d => d.year))
+	.nice()
+	.range([0, innerwidth])
+	
+	var yMarginUp_life = 2;
+	var yMarginDown_life = 2;
+	var y_life = d3.scaleLinear()
+	.domain([d3.min(data_life, d => d.value) - yMarginUp_life, d3.max(data_life, d => d.value) + yMarginDown_life])
+	.nice()
+	.range([innerheight, 0]);
+	
+	var line_life = d3.line()
+	.defined(d => !isNaN(d.value))
+	.x(d => x_life(d.year))
+	.y(d => y_life(d.value));
+	
+	var line_nsclc = d3.line()
+	.defined(d => !isNaN(d.value))
+	.x(d => x_nsclc(d.year))
+	.y(d => y_nsclc(d.value));
+
+	var xAxis_nsclc = g1 => g1
+	.attr("transform", `translate(${margin1.left}, ${height - margin1.bottom})`)
+	.style("font-size", "15px")
+	.call(d3.axisBottom(x_nsclc))
+	.call(g1 => g1.select(".tick:last-of-type text").clone()
+		.attr("x", 65)
+		.attr("y", -5)
+		.attr("text-anchor", "end")
+		.attr("font-weight", "bold")
+		.attr("font-size", "16px")
+		.text(data_nsclc.x));
+
+	var yAxis_nsclc = g2 => g2
+	.attr("transform", `translate(${margin1.left},${margin1.top})`)
+	.style("font-size", "15px")
+	.style("color", "green")
+	.call(d3.axisLeft(y_nsclc))
+	.call(g2 => g2.select(".tick:last-of-type text").clone()
+		.attr("y", -25)
+		.attr("x", -80)
+		.attr("text-anchor", "start")
+		.attr("font-size", "16px")
+		.text(data_nsclc.y));
+		
+	var yAxis_life = g3 => g3
+	.attr("transform", `translate(${width-margin1.right},${margin1.top})`)
+	.style("font-size", "15px")
+	.style("color", "steelblue")
+	.call(d3.axisRight(y_life))
+	.call(g3 => g3.select(".tick:last-of-type text").clone()
+		.attr("y", -25)
+		.attr("x", -70)
+		.attr("text-anchor", "start")
+		.attr("font-weight", "bold")
+		.attr("font-size", "16px")
+		.text(data_life.y));
+
+	var mysvg = d3.select("svg")
+	.attr("viewBox", [0, 0, width, height])
+
+	mysvg.append("g")
+		.call(xAxis_nsclc);
+
+	mysvg.append("g")
+		.call(yAxis_nsclc);
+
+	mysvg.append("g")
+		.call(yAxis_life);
+
+	// Create footer
+	var footer_x = margin1.left + innerwidth/2 - 250;
+	var footer_y = height - margin1.bottom + 50;
+	var myfooter = mysvg.append("g")
+		.attr("transform", "translate("+footer_x+","+footer_y+")")
+	myfooter.append("text")
+		.style("font-weight", "bold")
+		.style("font-size", "16px")
+		.text("Life Expectancy vs Lung/Bronchus Incident Rate, 1975-2016");
+
+	// Create focus cursor
+	var myfocus = mysvg.append("g")
+		.style("display", "none")
+		.attr("transform", "translate("+margin1.left+","+margin1.top+")");		
+	myfocus.append("circle")
+		.attr("class", "y")
+		.style("fill", "none")
+		.style("stroke", "steelblue")
+		.style("stroke-width", 3)
+		.attr("r", 10);
+	myfocus.append("line")
+		.attr("class", "y")
+		.style("stroke", "blue")
+		.style("stroke-dasharray", "3,3")
+		.style("opacity", 0.5)
+		.attr("y1", 0)
+		.attr("y2", innerheight);
+	myfocus.append("line")
+		.attr("class", "x")
+		.style("stroke", "blue")
+		.style("stroke-dasharray", "3,3")
+		.style("opacity", 0.5)
+		.attr("x1", innerwidth)
+		.attr("x2", innerwidth);
+	myfocus.append("text")
+		.attr("class", "y1")
+		.attr("dx", 20)
+		.attr("dy", "-1.2em")
+		.style("font-size", "14px")
+		.style("fill", "steelblue");
+	myfocus.append("text")
+		.attr("class", "y2")
+		.attr("dx", 20)
+		.attr("dy", "0em")
+		.style("font-size", "14px")
+		.style("fill", "steelblue");
+	myfocus.append("text")
+		.attr("class", "y3")
+		.attr("dx", 20)
+		.attr("dy", "1.2em")
+		.style("font-size", "14px")
+		.style("fill", "green");
+	var path_life = mysvg.append("path")
+		  .datum(data_life)
+		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
+		  .attr("fill", "none")
+		  .attr("stroke", "steelblue")
+		  .attr("stroke-width", 5)
+		  .attr("stroke-linejoin", "miter")
+		  .attr("stroke-linecap", "square")
+		  .attr("d", line_life)
+		  .attr("id", "path_life")
+		  .style("pointer-events", "all")
+		  .style("opacity", 1)
+		  .on("mouseover", function() { myfocus.style("display", null); })
+		  .on("mouseout", function() { myfocus.style("display", "none"); })
+		  .on("mousemove", mousemove);
+
+	var path_nsclc = mysvg.append("path")
+		  .datum(data_nsclc)
+		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
+		  .attr("fill", "none")
+		  .attr("stroke", "green")
+		  .attr("stroke-width", 1)
+		  .attr("stroke-linejoin", "miter")
+		  .attr("stroke-linecap", "square")
+		  .attr("stroke-dasharray", "3,3")
+		  .attr("d", line_nsclc)
+		  .attr("id", "path_nsclc")
+	//path_life.transition().duration(2000).ease(d3.easeLinear).style("opacity", 1)
+	
+	var bisectYear = d3.bisector(function(d) { return d.year; }).left;
+	function mousemove() {
+		var x = x_life;
+		var y = y_life;
+		var x0 = x.invert(d3.mouse(this)[0]);
+		var i = bisectYear(data_life, x0, 1);
+		var d0 = data_life[i - 1];
+		var d1 = data_life[i];
+		var j = i;
+		var d;
+		if (d1 != null) {
+			if (x0 - d0.year > d1.year - x0) {
+				d = d1;
+			} else {
+				d = d0;
+				j = i-1;
+			}
+		} else {
+			d = d0;
+			j = i-1;
+		};
+		var d2 = data_nsclc[j];
+		var dyval = y_nsclc(d2.value) < y(d.value)? y_nsclc(d2.value) : y(d.value);
+		myfocus.select("text.y1")
+			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
+			.text("Year: " + d.year);
+
+		myfocus.select("text.y2")
+			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
+			.text("Life Expectancy: " + d.value);
+	
+		myfocus.select("text.y3")
+			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
+			.text("Incident Rate: " + d2.value);
+
+		myfocus.select("line.y")
+			.attr("transform", "translate(" + x(d.year) + "," + dyval + ")")
+			.attr("y2", innerheight - dyval);
+
+		myfocus.select("line.x")
+			.attr("transform", "translate(" + innerwidth * -1 + "," + y(d.value) + ")")
+			.attr("x2", 2 * innerwidth);
+		
+		myfocus.select("circle.y")
+			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")");
+	}
+}
+</script>
+</div>
+</div>
+</body>
+</html>	
