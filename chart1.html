@@ -14,7 +14,9 @@
 </svg>
 <script>
 async function init() {
-	const data =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/incident_rate_over_year.csv", d3.autoType)).map(({year_of_disagnose, incident_rate}) => ({year:year_of_disagnose, value: incident_rate})), {x:"Year", y: "Incidents Per 100'000"});
+	const data =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/incident_rate_over_year.csv"))
+	.map(({year_of_disagnose, incident_rate}) => ({year:year_of_disagnose, value: incident_rate})), 
+	{x:"Year", y: "Incidents Per 100'000"});
 	var height = 460;
 	var width = 870;
 	var margin1 = ({top: 50, right: 130, bottom: 30, left: 90});
@@ -31,7 +33,6 @@ async function init() {
     .range([height - margin1.bottom, margin1.top]);
 		
 	var line = d3.line()
-    .defined(d => !isNaN(d.value))
     .x(d => x(d.year))
     .y(d => y(d.value));
 
@@ -40,11 +41,11 @@ async function init() {
 	.style("font-size", "15px")
     .call(d3.axisBottom(x))
 	.call(g1 => g1.select(".tick:last-of-type text").clone()
-        .attr("x", 60)
+        .attr("x", 55)
 		.attr("y", -5)
         .attr("text-anchor", "end")
         .attr("font-weight", "bold")
-		.attr("font-size", "15px")
+		.attr("font-size", "16px")
         .text(data.x));
 
 	var yAxis = g2 => g2
@@ -52,11 +53,11 @@ async function init() {
 	.style("font-size", "15px")
     .call(d3.axisLeft(y))
     .call(g2 => g2.select(".tick:last-of-type text").clone()
-        .attr("y", -20)
-		.attr("x", -50)
+        .attr("y", -25)
+		.attr("x", -80)
         .attr("text-anchor", "start")
         .attr("font-weight", "bold")
-		.attr("font-size", "15px")
+		.attr("font-size", "16px")
         .text(data.y));
 
 	var mysvg = d3.select("svg")
@@ -72,9 +73,9 @@ async function init() {
 		  .datum(data)
 		  .attr("fill", "none")
 		  .attr("stroke", "steelblue")
-		  .attr("stroke-width", 5)
-		  .attr("stroke-linejoin", "round")
-		  .attr("stroke-linecap", "round")
+		  .attr("stroke-width", 4)
+		  .attr("stroke-linejoin", "miter")
+		  .attr("stroke-linecap", "square")
 		  .attr("d", line);
 }
 </script>
