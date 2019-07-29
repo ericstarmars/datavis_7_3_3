@@ -1,54 +1,33 @@
 <html>
 <script src='https://d3js.org/d3.v5.min.js'></script>
 <style>
-path {  stroke: #fff; }
-path:hover {  opacity:0.9; }
 rect:hover {  fill:blue; }
 .axis {  font: 10px sans-serif; }
 .legend tr{    border-bottom:1px solid grey; }
 .legend tr:first-child{    border-top:1px solid grey; }
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.x.axis path {  display: none; }
-.legend{
-    margin-bottom:76px;
-    display:inline-block;
-    border-collapse: collapse;
-    border-spacing: 0px;
-}
-.legend td{
-    padding:4px 5px;
-    vertical-align:bottom;
-}
-.legendFreq, .legendPerc{
-    align:right;
-    width:50px;
 }
 </style>
 <body onload="init()">
 <div style="margin-top:5px">
 <div style="margin-left:30px; width:300px; height:100%; float:left">
 <h2>Lung/Bronchus Cancer and Age</h2>
-<p>Here is figure showing how much odds that one person can might get lung or bronchus cancer.</p>
-<p>We can infer from that, generally, the older, the higher probability that one may get lung cancer.</p>
+<p>First we would like to take into consideration the factor: <b>AGE</b></p>
+<p>Here is figure showing how much odds that one person can might get lung or bronchus cancer at a certain <b>age</b>, in terms of Number of Incidents per 100,000.</p>
+<p>We can infer from that, the rate is quite low under 40, but it rises dramatically after 40 years old, and reaches its peak over 80.</p>
+<p>How is this related to Lung/Bronchus trends? <br>Click <b>Next</b> to find out more.</p>
+<p>You can also <b>MouseOver</b> the bars for findout detailed info.</p>
 </div>
 <div style="margin-left:30px; height:100%; float:left">
-<svg width=900 height=480>
+<svg width=800 height=450>
 </svg>
 <script>
 async function init() {
 	const data =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/incident_age.csv"))
 	.map(({diagnose_age, incident_cnt}) => 
 	({age:diagnose_age, value:parseFloat(incident_cnt)})), 
-	{x:"Age", y: "Incident Count"});
-	var height = 480;
-	var width = 900;
+	{x:"Age", y: "Incidents Per 100'000"});
+	var height = 450;
+	var width = 800;
 	var margin1 = ({top: 60, right: 120, bottom: 70, left: 90});
 	var innerwidth = width - margin1.left - margin1.right;
 	var innerheight = height - margin1.top - margin1.bottom;
@@ -60,8 +39,8 @@ async function init() {
 		.domain(data.map(function(d) { return d.age; }))
 		.range([0, innerwidth]);
 
-	var y = d3.scaleLog()
-		.domain([0, d3.max(data, d => d.value)])
+	var y = d3.scaleLinear()
+		.domain([0.001, d3.max(data, d => d.value)])
 		.range([innerheight, 0]);
 	
 	console.log(d3.max(data, function(d) {return d.value;}));
@@ -93,22 +72,52 @@ async function init() {
 
 	mysvg.append("g")
 		.call(yAxis);
-/*
+
+	// Create footer
+	var footer_x = margin1.left + innerwidth/2 - 250;
+	var footer_y = height - margin1.bottom + 50;
+	var myfooter = mysvg.append("g")
+		.attr("transform", "translate("+footer_x+","+footer_y+")")
+	myfooter.append("text")
+		.style("font-weight", "bold")
+		.style("font-size", "16px")
+		.text("Lung/Bronchus Diagnosed Rate at different Ages, incidents per 100'000");
+		
+	// Create histogram
 	var bars = mysvg.selectAll(".bar")
 		.data(data)
 		.enter()
 		.append("g")
-		.attr("class", "bar");
-		
+		.attr("transform", "translate("+margin1.left+","+margin1.top+")")
+		.attr("class", "bar");		
 	bars.append("rect")
 		.attr("x", function(d) { return x(d.age); })
 		.attr("y", function(d) { return y(d.value); })
-		.attr("width", innerwidth)
+		.attr("width", x.step()-4)
 		.attr("height", function(d) { return innerheight - y(d.value); })
 		.attr('fill', "steelblue")
-		//.on("mouseover",mouseover)// mouseover is defined below.
-		//.on("mouseout",mouseout);// mouseout is defined below.
-*/
+		.on("mouseover",mouseover)
+		.on("mouseout", function() { myfocus.style("display", "none"); });
+
+	// Create focus cursor
+	var myfocus = mysvg.append("g")
+		.style("display", "none")
+		.attr("transform", "translate("+margin1.left+","+margin1.top+")");
+	myfocus.append("text")
+		.attr("class", "y")
+		.attr("dx", 0)
+		.attr("dy", -15)
+		.style("font-size", "14px")
+		.style("font-weight", "bold")
+		.style("font-family", "sans-serif");
+	function mouseover(d) {
+		console.log("age"+d.age);
+		console.log("value"+d.value);
+		myfocus.select("text.y")
+			.attr("transform", "translate(" + x(d.age) + "," + y(d.value) + ")")
+			.text(d.value);
+		myfocus.style("display", null);
+	}
 }
 </script>
 </div>

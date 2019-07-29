@@ -3,14 +3,14 @@
 <body onload="init()">
 <div style="margin-top:5px">
 <div style="margin-left:30px; width:300px; height:100%; float:left">
-<h2>Lung and Bronchus Cancer Rates: 1975-2016</h2>
-<p>Here at the right is a figure showing the trend of lung and bronchus cancer from year 1975 to 2016. It displays the incidents rates of each year, in terms of No. of incidents per 100'000 people.</p>
+<h2>Lung and Bronchus Cancer Dignosed Rate: 1975-2016</h2>
+<p>Here at the right is a figure showing the trend of lung and bronchus cancer from year 1975 to 2016. It displays the incidents dignosed rates of each year, in terms of No. of incidents per 100'000 people.</p>
 <p>We can see that there is a trend of growth with lung and bronchus cancer incident rate before <b>1990</b>, and then gradually drops afterward.</p>
 <p>Details can be obtained through <b>MouseOver</b> the line.</p>
-<p>What is the reason behind the change? What makes the drop of lung/bronchus cancer rate? Click <b>"Next"</b> for more info.</p>	
+<p>What is the reason behind the change? What makes the drop of lung/bronchus cancer rate? Click <b>"Next"</b> for more info.</p>
 </div>
 <div style="margin-left:30px; height:100%; float:left">
-<svg width=900 height=480>
+<svg width=800 height=450>
 </svg>
 <script>
 async function init() {
@@ -18,8 +18,8 @@ async function init() {
 	.map(({year_of_disagnose, incident_rate}) => 
 	({year:year_of_disagnose, value:parseFloat(incident_rate)})), 
 	{x:"Year", y: "Incidents Per 100'000"});
-	var height = 480;
-	var width = 900;
+	var height = 450;
+	var width = 800;
 	var margin1 = ({top: 60, right: 120, bottom: 70, left: 90});
 	var innerwidth = width - margin1.left - margin1.right;
 	var innerheight = height - margin1.top - margin1.bottom;
@@ -75,14 +75,14 @@ async function init() {
 		.call(yAxis);
 
 	// Create footer
-	var footer_x = margin1.left + innerwidth/2 - 280;
-	var footer_y = height - margin1.bottom + 60;
+	var footer_x = margin1.left + innerwidth/2 - 250;
+	var footer_y = height - margin1.bottom + 50;
 	var myfooter = mysvg.append("g")
 		.attr("transform", "translate("+footer_x+","+footer_y+")")
 	myfooter.append("text")
 		.style("font-weight", "bold")
-		.style("font-size", "18px")
-		.text("Lung/Bronchus Rate 1975-2016, incidents per 100'000");
+		.style("font-size", "16px")
+		.text("Lung/Bronchus Diagnosed Rate 1975-2016, incidents per 100'000");
 	// Create focus cursor
 	var myfocus = mysvg.append("g")
 		.style("display", "none")
