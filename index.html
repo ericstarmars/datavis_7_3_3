@@ -1,9 +1,58 @@
 <html>
-<frameset rows="150px, *">
-<frame src="navigator.html">
-<frameset cols="250px,*">
-<frame src="text1.html">
-<frame src="chart1.html">
-</frameset>
-</frameset>
+<title>The Trends of Lung and Bronchus Cancer and The Reason behind it</title>
+<body>
+<script>
+const pagemin = 1;
+const pagemax = 2;
+var pageid = 1;
+const pageprefix = "chart";
+var pagename = pageprefix + pageid + ".html";
+function click_buttonnext() {
+	var buttonprev = document.getElementById("prevbutton");
+	var buttonnext = document.getElementById("nextbutton");
+	if (pageid < pagemax)
+		pageid++;
+	pagename = pageprefix + pageid + ".html";
+	document.getElementById("ifm").src = pagename;
+	if (pageid == pagemin) {
+		buttonprev.disabled = true;
+	} else {
+		buttonprev.disabled = false;
+	};
+	if (pageid == pagemax) {
+		buttonnext.disabled = true;
+	} else {
+		buttonnext.disabled = false;
+	};
+};
+function click_buttonprev() {
+	var buttonprev = document.getElementById("prevbutton");
+	var buttonnext = document.getElementById("nextbutton");
+	if (pageid > pagemin)
+		pageid--;
+	pagename = pageprefix + pageid + ".html";
+	document.getElementById("ifm").src = pagename;
+	if (pageid == pagemin) {
+		buttonprev.disabled = true;
+	} else {
+		buttonprev.disabled = false;
+	};
+	if (pageid == pagemax) {
+		buttonnext.disabled = true;
+	} else {
+		buttonnext.disabled = false;
+	};
+};
+</script>
+<div style="margin-top:20px; margin-left:30px">
+<h1 style="text-align:center; font-size:35px">The Trends of Lung and Bronchus Cancer and The Reason behind it</h1>
+<p style="font-size:20px">Here shows the change of lung and bronchus cancer rate from year 1975 to 2016.</br>
+And we are going to figure out the reason behind the change.</p>
+<div class="navlayer" >
+<button id="prevbutton" name="prevbutton" type="button" style="font-size:18px" onclick="click_buttonprev()" disabled> Prev </button>  
+<button id="nextbutton" name="nextbutton" type="button" style="font-size:18px" onclick="click_buttonnext()"> Next </button>
+</div>
+</div>
+<iframe name="ifm" id="ifm" scrolling="yes" style="background-color: transparent;" marginwidth="0" marginheight="0" frameborder="0" width="100%" height="100%" src="chart1.html">
+</body>
 </html>
