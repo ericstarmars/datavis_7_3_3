@@ -57,14 +57,14 @@ async function init() {
 	.attr("viewBox", [0, 0, width, height]);
 	
 	var x = d3.scaleBand()
-		.domain(data.map(function(d) { return d.age; }))
+		.domain(data.map(function(d) { console.log(d.value); return d.age; }))
 		.range([0, innerwidth]);
 
-	var y = d3.scaleLog()
+	var y = d3.scaleLinear()
 		.domain([0, d3.max(data, function(d) {return d.value;})])
 		.range([innerheight, 0]);
 	
-	//console.log(d3.max(data, function(d) {return d.value;}));
+	console.log(d3.max(data, function(d) {return d.value;}));
 	
 	var xAxis = g1 => g1
 	.attr("transform", `translate(${margin1.left}, ${height - margin1.bottom})`)
@@ -93,7 +93,7 @@ async function init() {
 
 	mysvg.append("g")
 		.call(yAxis);
-
+/*
 	var bars = mysvg.selectAll(".bar")
 		.data(data)
 		.enter()
@@ -108,7 +108,7 @@ async function init() {
 		.attr('fill', "steelblue")
 		//.on("mouseover",mouseover)// mouseover is defined below.
 		//.on("mouseout",mouseout);// mouseout is defined below.
-
+*/
 }
 </script>
 </div>
