@@ -1,13 +1,116 @@
 <html>
-<body>
+<script src='https://d3js.org/d3.v5.min.js'></script>
+<style>
+path {  stroke: #fff; }
+path:hover {  opacity:0.9; }
+rect:hover {  fill:blue; }
+.axis {  font: 10px sans-serif; }
+.legend tr{    border-bottom:1px solid grey; }
+.legend tr:first-child{    border-top:1px solid grey; }
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {  display: none; }
+.legend{
+    margin-bottom:76px;
+    display:inline-block;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+.legend td{
+    padding:4px 5px;
+    vertical-align:bottom;
+}
+.legendFreq, .legendPerc{
+    align:right;
+    width:50px;
+}
+</style>
+<body onload="init()">
 <div style="margin-top:5px">
 <div style="margin-left:30px; width:300px; height:100%; float:left">
 <h2>Lung/Bronchus Cancer and Age</h2>
 <p>Here is figure showing how much odds that one person can might get lung or bronchus cancer.</p>
 <p>We can infer from that, generally, the older, the higher probability that one may get lung cancer.</p>
 </div>
-<div style="margin-top:20px; margin-left:30px; height:100%; float:left">
-Just test media
+<div style="margin-left:30px; height:100%; float:left">
+<svg width=900 height=480>
+</svg>
+<script>
+async function init() {
+	const data =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/incident_age.csv"))
+	.map(({diagnose_age, incident_cnt}) => 
+	({age:diagnose_age, value:incident_cnt})), 
+	{x:"Age", y: "Incident Count"});
+	var height = 480;
+	var width = 900;
+	var margin1 = ({top: 60, right: 120, bottom: 70, left: 90});
+	var innerwidth = width - margin1.left - margin1.right;
+	var innerheight = height - margin1.top - margin1.bottom;
+
+	var mysvg = d3.select("svg")
+	.attr("viewBox", [0, 0, width, height]);
+	
+	var x = d3.scaleBand()
+		.domain(data.map(function(d) { return d.age; }))
+		.range([0, innerwidth]);
+
+	var y = d3.scaleLog()
+		.domain([0, d3.max(data, function(d) {return d.value;})])
+		.range([innerheight, 0]);
+	
+	//console.log(d3.max(data, function(d) {return d.value;}));
+	
+	var xAxis = g1 => g1
+	.attr("transform", `translate(${margin1.left}, ${height - margin1.bottom})`)
+	.call(d3.axisBottom(x))
+	.call(g1 => g1.select(".tick:last-of-type text").clone()
+		.attr("x", 55)
+		.attr("y", -5)
+		.attr("text-anchor", "end")
+		.attr("font-weight", "bold")
+		.attr("font-size", "16px")
+		.text(data.x));
+
+	var yAxis = g2 => g2
+	.attr("transform", `translate(${margin1.left},${margin1.top})`)
+	.call(d3.axisLeft(y))
+	.call(g2 => g2.select(".tick:last-of-type text").clone()
+		.attr("y", -25)
+		.attr("x", -80)
+		.attr("text-anchor", "start")
+		.attr("font-weight", "bold")
+		.attr("font-size", "16px")
+		.text(data.y));		
+
+	mysvg.append("g")
+		.call(xAxis);
+
+	mysvg.append("g")
+		.call(yAxis);
+
+	var bars = mysvg.selectAll(".bar")
+		.data(data)
+		.enter()
+		.append("g")
+		.attr("class", "bar");
+		
+	bars.append("rect")
+		.attr("x", function(d) { return x(d.age); })
+		.attr("y", function(d) { return y(d.value); })
+		.attr("width", innerwidth)
+		.attr("height", function(d) { return innerheight - y(d.value); })
+		.attr('fill', "steelblue")
+		//.on("mouseover",mouseover)// mouseover is defined below.
+		//.on("mouseout",mouseout);// mouseout is defined below.
+
+}
+</script>
 </div>
 </div>
 </body>
