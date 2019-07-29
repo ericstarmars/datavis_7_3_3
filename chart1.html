@@ -148,11 +148,11 @@ async function init() {
 		};
 		myfocus.select("text.y1")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
-			.text("Incident rate: " + d.value);
+			.text("Year: " + d.year);
 
 		myfocus.select("text.y2")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
-			.text("Year: " + d.year);
+			.text("Incident rate: " + d.value);
 
 		myfocus.select("line.x")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
@@ -211,13 +211,13 @@ async function init() {
 		.attr("dx", 20)
 		.attr("dy", "0em")
 		.style("fill", "red")
-		.text("Incident rate: " + dmax.value);
+		.text("Year: " + dmax.year);
 	mypeak.append("text")
 		.attr("transform", "translate(" + x(dmax.year) + "," + y(dmax.value) + ")")
 		.attr("dx", 20)
 		.attr("dy", "1.2em")
 		.style("fill", "red")
-		.text("Year: " + dmax.year);
+		.text("Incident rate: " + dmax.value);
 	mypeak.transition().duration(3500).ease(d3.easeLinear).style("opacity", 1)
 }
 </script>
