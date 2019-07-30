@@ -1,0 +1,269 @@
+<html>
+<script src='https://d3js.org/d3.v5.min.js'></script>
+<script src='common.js'></script>
+<body onload="init()">
+<div style="margin-top:5px">
+<div style="margin-left:30px; width:300px; height:100%; float:left">
+<h2>Smoking Rate: 1955-2015</h2>
+<p>As we have already known the correlation between Smoking and Lung/Bronchus Cancer Rate. Here we continue to show the Smoking Rate Change during the past 6 decades, <b>from 1955 to 2015</b>.</p>
+<p>We can see there is a rise in Smoking Rate during the first 1-2 decades, <b>peaking around 1965-1975</b>. Then gradually drop.</p>
+From the graph, we can see there is a gap between Smoking Peak and the peak of Lung/Bronchus cancer, this is expected because normally there will be around 20 years after a smoker first smoke and before smoking can finally lead to Lung/Bronchus cancer.</p>
+<p>Details can be obtained through <b>MouseOver</b> the line.</p>
+<p>What can we draw from these graphs? Click <b>Next</b> to find out.
+</div>
+<div style="margin-left:30px; height:100%; float:left">
+<svg width=1000 height=500>
+</svg>
+<script>
+async function init() {
+	const data_nsclc =  Object.assign((await d3.csv(datasrc_prefix + "incident_rate_over_year.csv"))
+	.map(({year_of_disagnose, incident_rate}) => 
+	({year:year_of_disagnose, value:parseFloat(incident_rate)})), 
+	{x:"Year", y: "Incidents Per 100'000"});
+	
+	const data_smoke =  Object.assign((await d3.csv(datasrc_prefix + "smoking_prevalance.csv"))
+	.map(({year, per_capital}) => 
+	({year:year, value:parseFloat(per_capital)})), 
+	{x:"Year", y: "Cigarettes Per Capital"});	
+
+	var height = 500;
+	var width = 1000;
+	var margin1 = ({top: 100, right: 120, bottom: 70, left: 90});
+	var innerwidth = width - margin1.left - margin1.right;
+	var innerheight = height - margin1.top - margin1.bottom;
+	
+	var x_smoke = d3.scaleLinear()
+	.domain(d3.extent(data_smoke, d => d.year))
+	.range([0, innerwidth])
+	
+	var yMarginUp_smoke = 200;
+	var yMarginDown_smoke = 200;
+	var y_smoke = d3.scaleLinear()
+	.domain([d3.min(data_smoke, d => d.value) - yMarginUp_smoke, d3.max(data_smoke, d => d.value) + yMarginDown_smoke])
+	.nice()
+	.range([innerheight, 0]);
+	
+	var line_smoke = d3.line()
+	.defined(d => !isNaN(d.value))
+	.x(d => x_smoke(d.year))
+	.y(d => y_smoke(d.value));
+	
+	var yAxis_nsclc = g2 => g2
+	.attr("transform", `translate(${margin1.left},${margin1.top})`)
+	.style("font-size", "15px")
+	.style("color", nsclc_color)
+	.call(d3.axisLeft(y_nsclc))
+	.call(g2 => g2.select(".tick:last-of-type text").clone()
+		.attr("y", -25)
+		.attr("x", -80)
+		.attr("text-anchor", "start")
+		.attr("font-size", "16px")
+		.text(data_nsclc.y));
+		
+	var xAxis_smoke = g1 => g1
+	.attr("transform", `translate(${margin1.left}, ${height - margin1.bottom})`)
+	.style("font-size", "15px")
+	.call(d3.axisBottom(x_smoke))
+	.call(g1 => g1.select(".tick:last-of-type text").clone()
+		.attr("x", 95)
+		.attr("y", -5)
+		.attr("text-anchor", "end")
+		.attr("font-weight", "bold")
+		.attr("font-size", "16px")
+		.text(data_smoke.x));
+
+	var yAxis_smoke = g3 => g3
+	.attr("transform", `translate(${width-margin1.right},${margin1.top})`)
+	.style("font-size", "15px")
+	.style("font-weight", "bold")
+	.style("color", smoke_color)
+	.call(d3.axisRight(y_smoke))
+	.call(g3 => g3.select(".tick:last-of-type text").clone()
+		.attr("y", -25)
+		.attr("x", -70)
+		.attr("text-anchor", "start")
+		.attr("font-weight", "bold")
+		.attr("font-size", "16px")
+		.text(data_smoke.y));
+		
+	var xstart_nsclc = x_smoke(d3.min(data_nsclc, d => parseInt(d.year)));
+	var x_nsclc = d3.scaleLinear()
+	.domain(d3.extent(data_nsclc, d => d.year))
+	.range([xstart_nsclc, innerwidth])
+	var yMarginUp_nsclc = 5;
+	var yMarginDown_nsclc = 0;
+	var y_nsclc = d3.scaleLinear()
+	.domain([d3.min(data_nsclc, d => d.value) - yMarginUp_nsclc, d3.max(data_nsclc, d => d.value) + yMarginDown_nsclc])
+	.nice()
+	.range([innerheight, 0]);
+	
+	var line_nsclc = d3.line()
+	.defined(d => !isNaN(d.value))
+	.x(d => x_nsclc(d.year))
+	.y(d => y_nsclc(d.value));
+		
+	var mysvg = d3.select("svg")
+	.attr("viewBox", [0, 0, width, height])
+	mysvg.append("g")
+		.call(xAxis_smoke);
+	mysvg.append("g")
+		.call(yAxis_nsclc);
+	mysvg.append("g")
+		.call(yAxis_smoke);
+	// Create footer
+	var footer_smoke_x = margin1.left + innerwidth/2;
+	var footer_smoke_y = height - margin1.bottom + 50;
+	var myfooter_smoke = mysvg.append("g")
+		.attr("transform", "translate("+footer_smoke_x+","+footer_smoke_y+")")
+	myfooter_smoke.append("text")
+		.style("color", smoke_color)
+		.style("font-weight", "bold")
+		.style("font-size", "16px")
+		.attr("text-anchor", "center")
+		.text("Smoking Rate: Cigarettes Per Capita: 1955-2016");
+	var footer_nsclc_x = margin1.left + innerwidth/2;
+	var footer_nsclc_y = height - margin1.bottom + 80;
+	var myfooter_nsclc = mysvg.append("g")
+		.attr("transform", "translate("+footer_nsclc_x+","+footer_nsclc_y+")")
+	myfooter_nsclc.append("text")
+		.style("color", nsclc_color)
+		.style("font-size", "14px")
+		.attr("text-anchor", "center")
+		.text("Lung/Bronchus Incident Rate: 1975-2016");
+	// Create focus cursor
+	var myfocus = mysvg.append("g")
+		.style("display", "none")
+		.attr("transform", "translate("+margin1.left+","+margin1.top+")");		
+	myfocus.append("circle")
+		.attr("class", "y")
+		.style("fill", "none")
+		.style("stroke", smoke_color)
+		.style("stroke-width", 3)
+		.attr("r", 10);
+	myfocus.append("line")
+		.attr("class", "y")
+		.style("stroke", "blue")
+		.style("stroke-dasharray", "3,3")
+		.style("opacity", 0.5)
+		.attr("y1", 0)
+		.attr("y2", innerheight);
+	myfocus.append("line")
+		.attr("class", "x")
+		.style("stroke", "blue")
+		.style("stroke-dasharray", "3,3")
+		.style("opacity", 0.5)
+		.attr("x1", innerwidth)
+		.attr("x2", innerwidth);
+	myfocus.append("text")
+		.attr("class", "y1")
+		.attr("dx", 20)
+		.attr("dy", "-1.2em")
+		.style("font-size", "14px")
+		.style("fill", smoke_color);
+	myfocus.append("text")
+		.attr("class", "y2")
+		.attr("dx", 20)
+		.attr("dy", "0em")
+		.style("font-size", "14px")
+		.style("fill", smoke_color);
+	myfocus.append("text")
+		.attr("class", "y3")
+		.attr("dx", 20)
+		.attr("dy", "1.2em")
+		.style("font-size", "14px")
+		.style("fill", nsclc_color);
+	var path_smoke = mysvg.append("path")
+		  .datum(data_smoke)
+		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
+		  .attr("fill", "none")
+		  .attr("stroke", smoke_color)
+		  .attr("stroke-width", 5)
+		  .attr("stroke-linejoin", "miter")
+		  .attr("stroke-linecap", "square")
+		  .attr("d", line_smoke)
+		  .attr("id", "path_smoke")
+		  .style("pointer-events", "all")
+		  .style("opacity", 1)
+		  .on("mouseover", function() { myfocus.style("display", null); })
+		  .on("mouseout", function() { myfocus.style("display", "none"); })
+		  .on("mousemove", mousemove);
+	var path_nsclc = mysvg.append("path")
+		  .datum(data_nsclc)
+		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
+		  .attr("fill", "none")
+		  .attr("stroke", nsclc_color)
+		  .attr("stroke-width", 1)
+		  .attr("stroke-linejoin", "miter")
+		  .attr("stroke-linecap", "square")
+		  .attr("stroke-dasharray", "3,3")
+		  .attr("d", line_nsclc)
+		  .attr("id", "path_nsclc")
+	//path_smoke.transition().duration(2000).ease(d3.easeLinear).style("opacity", 1)
+	
+	var bisectYear = d3.bisector(function(d) { return d.year; }).left;
+	function mousemove() {
+		var x0 = x_smoke.invert(d3.mouse(this)[0]);
+		var i = bisectYear(data_smoke, x0, 1);
+		var d0 = data_smoke[i - 1];
+		var d1 = data_smoke[i];
+		var d;
+		if (d1 != null) {
+			if (x0 - d0.year > d1.year - x0) {
+				d = d1;
+			} else {
+				d = d0;
+			}
+		} else {
+			d = d0;
+		};
+		var d_nsclc = null;
+		data_nsclc.forEach(function(myd) {
+			if (myd.year == d.year) {
+				d_nsclc = myd;
+				return;
+			}
+		});
+		var dyval;
+		if (d_nsclc == null) {
+			dyval = y_smoke(d.value);
+			myfocus.select("text.y1")
+				.attr("transform", "translate(" + x_smoke(d.year) + "," + y_smoke(d.value) + ")")
+				.attr("dy", "-.6em")
+				.text("Year: " + d.year);
+			myfocus.select("text.y2")
+				.attr("transform", "translate(" + x_smoke(d.year) + "," + y_smoke(d.value) + ")")
+				.attr("dy", ".6em")
+				.text("Cigars Per Capita: " + d.value);
+			myfocus.select("text.y3")
+				.style("display", "none");
+		} else {
+			dyval = y_nsclc(d_nsclc.value) < y_smoke(d.value)? y_nsclc(d_nsclc.value) : y_smoke(d.value);
+			myfocus.select("text.y1")
+				.attr("transform", "translate(" + x_smoke(d.year) + "," + y_smoke(d.value) + ")")
+				.attr("dy", "-1.2em")
+				.text("Year: " + d.year);
+			myfocus.select("text.y2")
+				.attr("transform", "translate(" + x_smoke(d.year) + "," + y_smoke(d.value) + ")")
+				.attr("dy", "0em")
+				.text("Cigars Per Capita: " + d.value);
+			myfocus.select("text.y3")
+				.attr("transform", "translate(" + x_smoke(d.year) + "," + y_smoke(d.value) + ")")
+				.attr("dy", "1.2em")
+				.style("display", null)
+				.text("Incident Rate: " + d_nsclc.value);
+		}
+		myfocus.select("line.y")
+			.attr("transform", "translate(" + x_smoke(d.year) + "," + dyval + ")")
+			.attr("y2", innerheight - dyval);
+		myfocus.select("line.x")
+			.attr("transform", "translate(" + innerwidth * -1 + "," + y_smoke(d.value) + ")")
+			.attr("x2", 2 * innerwidth);
+		myfocus.select("circle.y")
+			.attr("transform", "translate(" + x_smoke(d.year) + "," + y_smoke(d.value) + ")");
+	}
+}
+</script>
+</div>
+</div>
+</body>
+</html>	

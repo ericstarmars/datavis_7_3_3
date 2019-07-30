@@ -1,5 +1,6 @@
 <html>
 <script src='https://d3js.org/d3.v5.min.js'></script>
+<script src='common.js'></script>
 <body onload="init()">
 <div style="margin-top:5px">
 <div style="margin-left:30px; width:300px; height:100%; float:left">
@@ -14,12 +15,12 @@
 </svg>
 <script>
 async function init() {
-	const data_nsclc =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/incident_rate_over_year.csv"))
+	const data_nsclc =  Object.assign((await d3.csv(datasrc_prefix + "incident_rate_over_year.csv"))
 	.map(({year_of_disagnose, incident_rate}) => 
 	({year:year_of_disagnose, value:parseFloat(incident_rate)})), 
 	{x:"Year", y: "Incidents Per 100'000"});
 	
-	const data_life =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/life_expectancy.csv"))
+	const data_life =  Object.assign((await d3.csv(datasrc_prefix + "life_expectancy.csv"))
 	.map(({year, life_exp}) => 
 	({year:year, value:parseFloat(parseFloat(life_exp).toFixed(2))})), 
 	{x:"Year", y: "Life Expectancy"});
@@ -34,7 +35,6 @@ async function init() {
 	.domain(d3.extent(data_nsclc, d => d.year))
 	.nice()
 	.range([0, innerwidth])
-
 	var yMarginUp_nsclc = 5;
 	var yMarginDown_nsclc = 0;
 	var y_nsclc = d3.scaleLinear()
@@ -63,7 +63,6 @@ async function init() {
 	.defined(d => !isNaN(d.value))
 	.x(d => x_nsclc(d.year))
 	.y(d => y_nsclc(d.value));
-
 	var xAxis_nsclc = g1 => g1
 	.attr("transform", `translate(${margin1.left}, ${height - margin1.bottom})`)
 	.style("font-size", "15px")
@@ -75,11 +74,10 @@ async function init() {
 		.attr("font-weight", "bold")
 		.attr("font-size", "16px")
 		.text(data_nsclc.x));
-
 	var yAxis_nsclc = g2 => g2
 	.attr("transform", `translate(${margin1.left},${margin1.top})`)
 	.style("font-size", "15px")
-	.style("color", "steelblue")
+	.style("color", nsclc_color)
 	.call(d3.axisLeft(y_nsclc))
 	.call(g2 => g2.select(".tick:last-of-type text").clone()
 		.attr("y", -25)
@@ -92,7 +90,7 @@ async function init() {
 	.attr("transform", `translate(${width-margin1.right},${margin1.top})`)
 	.style("font-size", "15px")
 	.style("font-weight", "bold")
-	.style("color", "green")
+	.style("color", life_color)
 	.call(d3.axisRight(y_life))
 	.call(g3 => g3.select(".tick:last-of-type text").clone()
 		.attr("y", -25)
@@ -101,19 +99,14 @@ async function init() {
 		.attr("font-weight", "bold")
 		.attr("font-size", "16px")
 		.text(data_life.y));
-
 	var mysvg = d3.select("svg")
 	.attr("viewBox", [0, 0, width, height])
-
 	mysvg.append("g")
 		.call(xAxis_nsclc);
-
 	mysvg.append("g")
 		.call(yAxis_nsclc);
-
 	mysvg.append("g")
 		.call(yAxis_life);
-
 	// Create footer
 	var footer_x = margin1.left + innerwidth/2 - 250;
 	var footer_y = height - margin1.bottom + 50;
@@ -123,7 +116,6 @@ async function init() {
 		.style("font-weight", "bold")
 		.style("font-size", "16px")
 		.text("Life Expectancy vs Lung/Bronchus Incident Rate, 1975-2016");
-
 	// Create focus cursor
 	var myfocus = mysvg.append("g")
 		.style("display", "none")
@@ -131,7 +123,7 @@ async function init() {
 	myfocus.append("circle")
 		.attr("class", "y")
 		.style("fill", "none")
-		.style("stroke", "green")
+		.style("stroke", life_color)
 		.style("stroke-width", 3)
 		.attr("r", 10);
 	myfocus.append("line")
@@ -153,24 +145,24 @@ async function init() {
 		.attr("dx", 20)
 		.attr("dy", "-1.2em")
 		.style("font-size", "14px")
-		.style("fill", "green");
+		.style("fill", life_color);
 	myfocus.append("text")
 		.attr("class", "y2")
 		.attr("dx", 20)
 		.attr("dy", "0em")
 		.style("font-size", "14px")
-		.style("fill", "green");
+		.style("fill", life_color);
 	myfocus.append("text")
 		.attr("class", "y3")
 		.attr("dx", 20)
 		.attr("dy", "1.2em")
 		.style("font-size", "14px")
-		.style("fill", "steelblue");
+		.style("fill", nsclc_color);
 	var path_life = mysvg.append("path")
 		  .datum(data_life)
 		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
 		  .attr("fill", "none")
-		  .attr("stroke", "green")
+		  .attr("stroke", life_color)
 		  .attr("stroke-width", 5)
 		  .attr("stroke-linejoin", "miter")
 		  .attr("stroke-linecap", "square")
@@ -181,12 +173,11 @@ async function init() {
 		  .on("mouseover", function() { myfocus.style("display", null); })
 		  .on("mouseout", function() { myfocus.style("display", "none"); })
 		  .on("mousemove", mousemove);
-
 	var path_nsclc = mysvg.append("path")
 		  .datum(data_nsclc)
 		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
 		  .attr("fill", "none")
-		  .attr("stroke", "steelblue")
+		  .attr("stroke", nsclc_color)
 		  .attr("stroke-width", 1)
 		  .attr("stroke-linejoin", "miter")
 		  .attr("stroke-linecap", "square")
@@ -221,7 +212,6 @@ async function init() {
 		myfocus.select("text.y1")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
 			.text("Year: " + d.year);
-
 		myfocus.select("text.y2")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
 			.text("Life Expectancy: " + d.value);
@@ -229,11 +219,9 @@ async function init() {
 		myfocus.select("text.y3")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
 			.text("Incident Rate: " + d2.value);
-
 		myfocus.select("line.y")
 			.attr("transform", "translate(" + x(d.year) + "," + dyval + ")")
 			.attr("y2", innerheight - dyval);
-
 		myfocus.select("line.x")
 			.attr("transform", "translate(" + innerwidth * -1 + "," + y(d.value) + ")")
 			.attr("x2", 2 * innerwidth);

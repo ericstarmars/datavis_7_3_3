@@ -1,25 +1,26 @@
 <html>
 <script src='https://d3js.org/d3.v5.min.js'></script>
+<script src='common.js'></script>
 <body onload="init()">
 <div style="margin-top:5px">
 <div style="margin-left:30px; width:300px; height:100%; float:left">
-<h2>Lung and Bronchus Cancer Dignosed Rate: 1975-2016</h2>
-<p>Here at the right is a figure showing the trend of lung and bronchus cancer from year 1975 to 2016. It displays the incidents dignosed rates of each year, in terms of No. of incidents per 100'000 people.</p>
+<h2>Lung and Bronchus Cancer Rates: 1975-2016</h2>
+<p>Here at the right is a figure showing the trend of lung and bronchus cancer from year 1975 to 2016. It displays the incidents rates of each year, in terms of No. of incidents per 100'000 people.</p>
 <p>We can see that there is a trend of growth with lung and bronchus cancer incident rate before <b>1990</b>, and then gradually drops afterward.</p>
 <p>Details can be obtained through <b>MouseOver</b> the line.</p>
-<p>What is the reason behind the change? What makes the drop of lung/bronchus cancer rate? Click <b>"Next"</b> for more info.</p>
+<p>What is the reason behind the change? What makes the drop of lung/bronchus cancer rate? Click <b>"Next"</b> for more info.</p>	
 </div>
 <div style="margin-left:30px; height:100%; float:left">
-<svg width=800 height=450>
+<svg width=900 height=480>
 </svg>
 <script>
 async function init() {
-	const data =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/incident_rate_over_year.csv"))
+	const data =  Object.assign((await d3.csv(datasrc_prefix + "incident_rate_over_year.csv"))
 	.map(({year_of_disagnose, incident_rate}) => 
-	({year:year_of_disagnose, value:parseFloat(incident_rate)})), 
+	({year:year_of_disagnose, value:incident_rate})), 
 	{x:"Year", y: "Incidents Per 100'000"});
-	var height = 450;
-	var width = 800;
+	var height = 480;
+	var width = 900;
 	var margin1 = ({top: 60, right: 120, bottom: 70, left: 90});
 	var innerwidth = width - margin1.left - margin1.right;
 	var innerheight = height - margin1.top - margin1.bottom;
@@ -28,7 +29,6 @@ async function init() {
 	.domain(d3.extent(data, d => d.year))
 	.nice()
 	.range([0, innerwidth])
-
 	var yMarginUp = 5;
 	var yMarginDown = 0;
 	var y = d3.scaleLinear()
@@ -40,7 +40,6 @@ async function init() {
 	.defined(d => !isNaN(d.value))
 	.x(d => x(d.year))
 	.y(d => y(d.value));
-
 	var xAxis = g1 => g1
 	.attr("transform", `translate(${margin1.left}, ${height - margin1.bottom})`)
 	.style("font-size", "15px")
@@ -52,7 +51,6 @@ async function init() {
 		.attr("font-weight", "bold")
 		.attr("font-size", "16px")
 		.text(data.x));
-
 	var yAxis = g2 => g2
 	.attr("transform", `translate(${margin1.left},${margin1.top})`)
 	.style("font-size", "15px")
@@ -64,25 +62,21 @@ async function init() {
 		.attr("font-weight", "bold")
 		.attr("font-size", "16px")
 		.text(data.y));
-
 	var mysvg = d3.select("svg")
 	.attr("viewBox", [0, 0, width, height])
-
 	mysvg.append("g")
 		.call(xAxis);
-
 	mysvg.append("g")
 		.call(yAxis);
-
 	// Create footer
-	var footer_x = margin1.left + innerwidth/2 - 250;
-	var footer_y = height - margin1.bottom + 50;
+	var footer_x = margin1.left + innerwidth/2 - 280;
+	var footer_y = height - margin1.bottom + 60;
 	var myfooter = mysvg.append("g")
 		.attr("transform", "translate("+footer_x+","+footer_y+")")
 	myfooter.append("text")
 		.style("font-weight", "bold")
-		.style("font-size", "16px")
-		.text("Lung/Bronchus Diagnosed Rate 1975-2016, incidents per 100'000");
+		.style("font-size", "18px")
+		.text("Lung/Bronchus Rate 1975-2016, incidents per 100'000");
 	// Create focus cursor
 	var myfocus = mysvg.append("g")
 		.style("display", "none")
@@ -94,14 +88,14 @@ async function init() {
 		.style("stroke-width", 3)
 		.attr("r", 10);
 	myfocus.append("line")
-		.attr("class", "y")
+		.attr("class", "x")
 		.style("stroke", "blue")
 		.style("stroke-dasharray", "3,3")
 		.style("opacity", 0.5)
 		.attr("y1", 0)
 		.attr("y2", innerheight);
 	myfocus.append("line")
-		.attr("class", "x")
+		.attr("class", "y")
 		.style("stroke", "blue")
 		.style("stroke-dasharray", "3,3")
 		.style("opacity", 0.5)
@@ -121,7 +115,7 @@ async function init() {
 		  .datum(data)
 		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
 		  .attr("fill", "none")
-		  .attr("stroke", "steelblue")
+		  .attr("stroke", nsclc_color)
 		  .attr("stroke-width", 4)
 		  .attr("stroke-linejoin", "miter")
 		  .attr("stroke-linecap", "square")
@@ -148,17 +142,14 @@ async function init() {
 		};
 		myfocus.select("text.y1")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
-			.text("Year: " + d.year);
-
+			.text("Incident rate: " + d.value);
 		myfocus.select("text.y2")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
-			.text("Incident rate: " + d.value);
-
-		myfocus.select("line.y")
+			.text("Year: " + d.year);
+		myfocus.select("line.x")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
 			.attr("y2", innerheight - y(d.value));
-
-		myfocus.select("line.x")
+		myfocus.select("line.y")
 			.attr("transform", "translate(" + innerwidth * -1 + "," + y(d.value) + ")")
 			.attr("x2", 2 * innerwidth);
 		
@@ -211,13 +202,13 @@ async function init() {
 		.attr("dx", 20)
 		.attr("dy", "0em")
 		.style("fill", "red")
-		.text("Year: " + dmax.year);
+		.text("Incident rate: " + dmax.value);
 	mypeak.append("text")
 		.attr("transform", "translate(" + x(dmax.year) + "," + y(dmax.value) + ")")
 		.attr("dx", 20)
 		.attr("dy", "1.2em")
 		.style("fill", "red")
-		.text("Incident rate: " + dmax.value);
+		.text("Year: " + dmax.year);
 	mypeak.transition().duration(3500).ease(d3.easeLinear).style("opacity", 1)
 }
 </script>

@@ -1,5 +1,6 @@
 <html>
 <script src='https://d3js.org/d3.v5.min.js'></script>
+<script src='common.js'></script>
 <body onload="init()">
 <div style="margin-top:5px">
 <div style="margin-left:30px; width:300px; height:100%; float:left">
@@ -14,7 +15,7 @@
 </svg>
 <script>
 async function init() {
-	const data =  Object.assign((await d3.csv("https://raw.githubusercontent.com/ericstarmars/datavis_yangliu/master/smoking_nsclc.csv"))
+	const data =  Object.assign((await d3.csv(datasrc_prefix + "smoking_nsclc.csv"))
 	.map(({cig_daily, relative_rate}) => 
 	({parname:cig_daily, value:parseFloat(relative_rate)})), 
 	{x:"Cigaretts/Day", y: "Relative Cancer Rate"});
@@ -23,14 +24,12 @@ async function init() {
 	var margin1 = ({top: 60, right: 150, bottom: 70, left: 90});
 	var innerwidth = width - margin1.left - margin1.right;
 	var innerheight = height - margin1.top - margin1.bottom;
-
 	var mysvg = d3.select("svg")
 	.attr("viewBox", [0, 0, width, height]);
 	
 	var x = d3.scaleBand()
 		.domain(data.map(function(d) { return d.parname; }))
 		.range([0, innerwidth]);
-
 	var y = d3.scaleLinear()
 		.domain([0, d3.max(data, d => d.value)])
 		.range([innerheight, 0]);
@@ -47,7 +46,6 @@ async function init() {
 		.attr("font-weight", "bold")
 		.attr("font-size", "16px")
 		.text(data.x));
-
 	var yAxis = g2 => g2
 	.attr("transform", `translate(${margin1.left},${margin1.top})`)
 	.call(d3.axisLeft(y))
@@ -58,13 +56,10 @@ async function init() {
 		.attr("font-weight", "bold")
 		.attr("font-size", "16px")
 		.text(data.y));		
-
 	mysvg.append("g")
 		.call(xAxis);
-
 	mysvg.append("g")
 		.call(yAxis);
-
 	// Create footer
 	var footer_x = margin1.left + innerwidth/2 - 150;
 	var footer_y = height - margin1.bottom + 50;
@@ -87,7 +82,7 @@ async function init() {
 		.attr("y", function(d) { return y(d.value); })
 		.attr("width", x.step()-20)
 		.attr("height", function(d) { return innerheight - y(d.value); })
-		.attr('fill', "steelblue")
+		.attr('fill', nsclc_color)
 	
 	bars.append("text")
 		.text(function(d){ return d3.format(",")(d.value)})
