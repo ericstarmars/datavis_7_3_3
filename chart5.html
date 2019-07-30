@@ -12,7 +12,7 @@ From the graph, we can see there is a gap between Smoking Peak and the peak of L
 <p>What can we draw from these graphs? Click <b>Next</b> to find out.
 </div>
 <div style="margin-left:30px; height:100%; float:left">
-<svg width=1000 height=500>
+<svg width=1000 height=550>
 </svg>
 <script>
 async function init() {
@@ -26,9 +26,9 @@ async function init() {
 	({year:year, value:parseFloat(per_capital)})), 
 	{x:"Year", y: "Cigarettes Per Capital"});	
 
-	var height = 500;
+	var height = 550;
 	var width = 1000;
-	var margin1 = ({top: 100, right: 120, bottom: 70, left: 90});
+	var margin1 = ({top: 100, right: 120, bottom: 100, left: 90});
 	var innerwidth = width - margin1.left - margin1.right;
 	var innerheight = height - margin1.top - margin1.bottom;
 	
@@ -111,22 +111,22 @@ async function init() {
 	mysvg.append("g")
 		.call(yAxis_smoke);
 	// Create footer
-	var footer_smoke_x = margin1.left + innerwidth/2;
+	var footer_smoke_x = margin1.left + innerwidth/2 - 200;
 	var footer_smoke_y = height - margin1.bottom + 50;
 	var myfooter_smoke = mysvg.append("g")
 		.attr("transform", "translate("+footer_smoke_x+","+footer_smoke_y+")")
 	myfooter_smoke.append("text")
-		.style("color", smoke_color)
+		.style("fill", smoke_color)
 		.style("font-weight", "bold")
 		.style("font-size", "16px")
 		.attr("text-anchor", "center")
 		.text("Smoking Rate: Cigarettes Per Capita: 1955-2016");
-	var footer_nsclc_x = margin1.left + innerwidth/2;
-	var footer_nsclc_y = height - margin1.bottom + 80;
+	var footer_nsclc_x = margin1.left + innerwidth/2 - 140;
+	var footer_nsclc_y = height - margin1.bottom + 70;
 	var myfooter_nsclc = mysvg.append("g")
 		.attr("transform", "translate("+footer_nsclc_x+","+footer_nsclc_y+")")
 	myfooter_nsclc.append("text")
-		.style("color", nsclc_color)
+		.style("fill", nsclc_color)
 		.style("font-size", "14px")
 		.attr("text-anchor", "center")
 		.text("Lung/Bronchus Incident Rate: 1975-2016");
@@ -177,7 +177,7 @@ async function init() {
 		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
 		  .attr("fill", "none")
 		  .attr("stroke", smoke_color)
-		  .attr("stroke-width", 5)
+		  .attr("stroke-width", 4)
 		  .attr("stroke-linejoin", "miter")
 		  .attr("stroke-linecap", "square")
 		  .attr("d", line_smoke)
@@ -187,6 +187,17 @@ async function init() {
 		  .on("mouseover", function() { myfocus.style("display", null); })
 		  .on("mouseout", function() { myfocus.style("display", "none"); })
 		  .on("mousemove", mousemove);
+	var dot_smoke = mysvg
+		.selectAll(".dot1")
+		.data(data_smoke)
+		.enter()
+		.append("circle")
+		.attr("transform", "translate("+margin1.left+","+margin1.top+")")
+		.attr("class", "dot1")
+		.style("fill", smoke_color)
+		.attr("cx", function(d, i) { return x_smoke(d.year) })
+		.attr("cy", function(d) { return y_smoke(d.value) })
+		.attr("r", 4);
 	var path_nsclc = mysvg.append("path")
 		  .datum(data_nsclc)
 		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
@@ -198,6 +209,17 @@ async function init() {
 		  .attr("stroke-dasharray", "3,3")
 		  .attr("d", line_nsclc)
 		  .attr("id", "path_nsclc")
+	var dot_nsclc = mysvg
+		.selectAll(".dot2")
+		.data(data_nsclc)
+		.enter()
+		.append("circle")
+		.attr("transform", "translate("+margin1.left+","+margin1.top+")")
+		.attr("class", "dot2")
+		.style("fill", nsclc_color)
+		.attr("cx", function(d, i) { return x_nsclc(d.year) })
+		.attr("cy", function(d) { return y_nsclc(d.value) })
+		.attr("r", 2);
 	//path_smoke.transition().duration(2000).ease(d3.easeLinear).style("opacity", 1)
 	
 	var bisectYear = d3.bisector(function(d) { return d.year; }).left;
