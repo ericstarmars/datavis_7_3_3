@@ -79,7 +79,7 @@ async function init() {
 	var yAxis_nsclc = g2 => g2
 	.attr("transform", `translate(${margin1.left},${margin1.top})`)
 	.style("font-size", "15px")
-	.style("color", "green")
+	.style("color", "steelblue")
 	.call(d3.axisLeft(y_nsclc))
 	.call(g2 => g2.select(".tick:last-of-type text").clone()
 		.attr("y", -25)
@@ -91,7 +91,8 @@ async function init() {
 	var yAxis_life = g3 => g3
 	.attr("transform", `translate(${width-margin1.right},${margin1.top})`)
 	.style("font-size", "15px")
-	.style("color", "steelblue")
+	.style("font-weight", "bold")
+	.style("color", "green")
 	.call(d3.axisRight(y_life))
 	.call(g3 => g3.select(".tick:last-of-type text").clone()
 		.attr("y", -25)
@@ -130,7 +131,7 @@ async function init() {
 	myfocus.append("circle")
 		.attr("class", "y")
 		.style("fill", "none")
-		.style("stroke", "steelblue")
+		.style("stroke", "green")
 		.style("stroke-width", 3)
 		.attr("r", 10);
 	myfocus.append("line")
@@ -152,24 +153,24 @@ async function init() {
 		.attr("dx", 20)
 		.attr("dy", "-1.2em")
 		.style("font-size", "14px")
-		.style("fill", "steelblue");
+		.style("fill", "green");
 	myfocus.append("text")
 		.attr("class", "y2")
 		.attr("dx", 20)
 		.attr("dy", "0em")
 		.style("font-size", "14px")
-		.style("fill", "steelblue");
+		.style("fill", "green");
 	myfocus.append("text")
 		.attr("class", "y3")
 		.attr("dx", 20)
 		.attr("dy", "1.2em")
 		.style("font-size", "14px")
-		.style("fill", "green");
+		.style("fill", "steelblue");
 	var path_life = mysvg.append("path")
 		  .datum(data_life)
 		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
 		  .attr("fill", "none")
-		  .attr("stroke", "steelblue")
+		  .attr("stroke", "green")
 		  .attr("stroke-width", 5)
 		  .attr("stroke-linejoin", "miter")
 		  .attr("stroke-linecap", "square")
@@ -185,7 +186,7 @@ async function init() {
 		  .datum(data_nsclc)
 		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
 		  .attr("fill", "none")
-		  .attr("stroke", "green")
+		  .attr("stroke", "steelblue")
 		  .attr("stroke-width", 1)
 		  .attr("stroke-linejoin", "miter")
 		  .attr("stroke-linecap", "square")
