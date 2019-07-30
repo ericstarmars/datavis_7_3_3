@@ -43,8 +43,6 @@ async function init() {
 		.domain([0.001, d3.max(data, d => d.value)])
 		.range([innerheight, 0]);
 	
-	console.log(d3.max(data, function(d) {return d.value;}));
-	
 	var xAxis = g1 => g1
 	.attr("transform", `translate(${margin1.left}, ${height - margin1.bottom})`)
 	.call(d3.axisBottom(x))
@@ -91,7 +89,7 @@ async function init() {
 		.attr("transform", "translate("+margin1.left+","+margin1.top+")")
 		.attr("class", "bar");		
 	bars.append("rect")
-		.attr("x", function(d) { return x(d.age); })
+		.attr("x", function(d) { return x(d.age)+2; })
 		.attr("y", function(d) { return y(d.value); })
 		.attr("width", x.step()-4)
 		.attr("height", function(d) { return innerheight - y(d.value); })
@@ -111,8 +109,6 @@ async function init() {
 		.style("font-weight", "bold")
 		.style("font-family", "sans-serif");
 	function mouseover(d) {
-		console.log("age"+d.age);
-		console.log("value"+d.value);
 		myfocus.select("text.y")
 			.attr("transform", "translate(" + x(d.age) + "," + y(d.value) + ")")
 			.text(d.value);
