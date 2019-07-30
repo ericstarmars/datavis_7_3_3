@@ -79,16 +79,20 @@ async function init() {
 		.attr("class", "bar");		
 	bars.append("rect")
 		.attr("x", function(d) { return x(d.parname)+10; })
-		.attr("y", function(d) { return y(d.value); })
+		.attr("y", y(0))
 		.attr("width", x.step()-20)
-		.attr("height", function(d) { return innerheight - y(d.value); })
+		.attr("height", 0)
 		.attr('fill', nsclc_color)
-	
+	bars.select("rect").transition().duration(500)
+		.attr("y", function(d) { return y(d.value); })
+		.attr("height", function(d) { return innerheight - y(d.value); })
 	bars.append("text")
 		.text(function(d){ return d3.format(",")(d.value)})
 		.attr("x", function(d) { return x(d.parname)+x.step()/2; })
 		.attr("y", function(d) { return y(d.value)-5; })
-		.attr("text-anchor", "middle");
+		.attr("text-anchor", "middle")
+		.style("opacity", 0);
+	bars.select("text").transition().duration(1000).ease(d3.easeExpIn).style("opacity", 1);
 }
 </script>
 </div>

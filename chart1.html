@@ -229,7 +229,7 @@ async function init() {
 		.attr("dy", "1.2em")
 		.style("fill", peak_color)
 		.text("Incident rate: " + dmax.value);
-	mypeak.transition().duration(1500).ease(d3.easeLinear).style("opacity", 1);
+	mypeak.transition().duration(1500).ease(d3.easeExpIn).style("opacity", 1);
 }
 </script>
 </div>
