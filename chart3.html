@@ -128,14 +128,14 @@ async function init() {
 		.attr("r", 10);
 	myfocus.append("line")
 		.attr("class", "y")
-		.style("stroke", "blue")
+		.style("stroke", life_color)
 		.style("stroke-dasharray", "3,3")
 		.style("opacity", 0.5)
 		.attr("y1", 0)
 		.attr("y2", innerheight);
 	myfocus.append("line")
 		.attr("class", "x")
-		.style("stroke", "blue")
+		.style("stroke", life_color)
 		.style("stroke-dasharray", "3,3")
 		.style("opacity", 0.5)
 		.attr("x1", innerwidth)
@@ -222,6 +222,7 @@ async function init() {
 	.transition()
 	.duration(1000)
 	.ease(d3.easeLinear)
+	.attr("stroke-dasharray", "3,3")
 	.attr("stroke-dashoffset", 0);
 	dot_life.transition().duration(1200).ease(d3.easeExpIn).style("opacity", 1);
 	dot_nsclc.transition().duration(1200).ease(d3.easeExpIn).style("opacity", 1);

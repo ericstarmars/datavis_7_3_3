@@ -7,7 +7,7 @@
 <h2>Smoking Rate: 1955-2015</h2>
 <p>As we have already known the correlation between Smoking and Lung/Bronchus Cancer Rate. Here we continue to show the Smoking Rate Change during the past 6 decades, <b>from 1955 to 2015</b> (Counted as annual gross Cigarettes Per Capita).</p>
 <p>We can see there is a rise in Smoking Rate during the first 1-2 decades, <b>peaking around 1965-1975</b>. Then gradually drop.</p>
-From the graph, we can see there is <b>a gap between Smoking Peak and the peak of Lung/Bronchus cancer</b>, this is expected because normally there will be around <b>20 years</b> after a smoker first smoke and before smoking can finally lead to Lung/Bronchus Cancer.</p>
+From the graph, we can see there is <b>a gap between Smoking Peak and the peak of Lung/Bronchus cancer rate</b>, this is expected because normally there will be around <b>20-25 years</b> after a smoker first smoke and before smoking can finally lead to Lung/Bronchus Cancer.</p>
 <p>Details can be obtained through <b>MouseOver</b> the line.</p>
 <p>What can we conclude from these graphs? Click <b>Next</b> to continue.
 </div>
@@ -142,14 +142,14 @@ async function init() {
 		.attr("r", 10);
 	myfocus.append("line")
 		.attr("class", "y")
-		.style("stroke", "blue")
+		.style("stroke", smoke_color)
 		.style("stroke-dasharray", "3,3")
 		.style("opacity", 0.5)
 		.attr("y1", 0)
 		.attr("y2", innerheight);
 	myfocus.append("line")
 		.attr("class", "x")
-		.style("stroke", "blue")
+		.style("stroke", smoke_color)
 		.style("stroke-dasharray", "3,3")
 		.style("opacity", 0.5)
 		.attr("x1", innerwidth)
@@ -236,6 +236,7 @@ async function init() {
 	.transition()
 	.duration(1000)
 	.ease(d3.easeLinear)
+	.attr("stroke-dasharray", "3,3")
 	.attr("stroke-dashoffset", 0);	
 	dot_smoke.transition().duration(1200).ease(d3.easeExpIn).style("opacity", 1);
 	dot_nsclc.transition().duration(1200).ease(d3.easeExpIn).style("opacity", 1);
