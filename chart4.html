@@ -5,10 +5,10 @@
 <div style="margin-top:5px">
 <div style="margin-left:30px; width:300px; height:100%; float:left">
 <h2>Lung/Bronchus Cancer and Smoking</h2>
-<p>Another known factor that contribute to Lung/Bronchus Cancer is: <b>Smoking</b></p>
-<p>While most people know that there is a correlation between Smoking and Lung/Bronchus Cancer, it would be more illustrative it with chart.</p>
-<p>Here at the right shows the relative rate of Lung/Bronchus Cancer vs Smoking (in terms of cigarettes/day). Obviously, the is a drastic increase of cancer rate with smoking, especially among heavy smokers.</p>
-<p>Then, how is this related to Lung/Bronchus trends? <br>Click <b>Next</b> to find out more.</p>
+<p>Another well-known factor that contribute to Lung/Bronchus Cancer is: <b>Smoking.</b></p>
+<p>While most people know that there is a correlation between Smoking and Lung/Bronchus Cancer, it would still be astonishing when knowing how Smoking can cause Lung/Bronchus Cancer.</p>
+<p>Here at the right shows the relative rate of Lung/Bronchus Cancer vs Smoking (in terms of Cigarettes/Day). Obviously, the is a drastic increase of cancer rate with smoking, especially among heavy smokers.</p>
+<p>Then, how is this related to Lung/Bronchus Cancer trends? <br>Click <b>Next</b> to find out more.</p>
 </div>
 <div style="margin-left:30px; height:100%; float:left">
 <svg width=650 height=450>
@@ -18,7 +18,7 @@ async function init() {
 	const data =  Object.assign((await d3.csv(datasrc_prefix + "smoking_nsclc.csv"))
 	.map(({cig_daily, relative_rate}) => 
 	({parname:cig_daily, value:parseFloat(relative_rate)})), 
-	{x:"Cigaretts/Day", y: "Relative Cancer Rate"});
+	{x:"Cigarettes/Day", y: "Relative Cancer Rate"});
 	var height = 450;
 	var width = 650;
 	var margin1 = ({top: 60, right: 150, bottom: 70, left: 90});
@@ -40,7 +40,7 @@ async function init() {
 	.attr("transform", `translate(${margin1.left}, ${height - margin1.bottom})`)
 	.call(d3.axisBottom(x))
 	.call(g1 => g1.select(".tick:last-of-type text").clone()
-		.attr("x", 155)
+		.attr("x", 165)
 		.attr("y", -5)
 		.attr("text-anchor", "end")
 		.attr("font-weight", "bold")
@@ -61,14 +61,14 @@ async function init() {
 	mysvg.append("g")
 		.call(yAxis);
 	// Create footer
-	var footer_x = margin1.left + innerwidth/2 - 150;
+	var footer_x = margin1.left + innerwidth/2 - 160;
 	var footer_y = height - margin1.bottom + 50;
 	var myfooter = mysvg.append("g")
 		.attr("transform", "translate("+footer_x+","+footer_y+")")
 	myfooter.append("text")
 		.style("font-weight", "bold")
 		.style("font-size", "16px")
-		.text("Lung/Bronchus Diagnosed Rate vs Smoking");
+		.text("Lung/Bronchus Cancer Diagnosed Rate vs Smoking");
 		
 	// Create histogram
 	var bars = mysvg.selectAll(".bar")

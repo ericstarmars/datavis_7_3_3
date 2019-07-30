@@ -3,15 +3,16 @@
 <body>
 <script>
 const pagemin = 1;
-const pagemax = 5;
+const pagemax = 6;
 var pageid = 1;
 const pageprefix = "chart";
 var pagename = pageprefix + pageid + ".html";
-function click_buttonnext() {
+var textobj;
+function click_common() {
+	document.getElementById("text" + pageid)
+		.setAttribute("style", "font-size:22px; font-weight:bold; color:black");
 	var buttonprev = document.getElementById("prevbutton");
 	var buttonnext = document.getElementById("nextbutton");
-	if (pageid < pagemax)
-		pageid++;
 	pagename = pageprefix + pageid + ".html";
 	document.getElementById("ifm").src = pagename;
 	if (pageid == pagemin) {
@@ -24,33 +25,38 @@ function click_buttonnext() {
 	} else {
 		buttonnext.disabled = false;
 	};
+}
+function click_buttonnext() {
+	document.getElementById("text"+pageid)
+		.setAttribute("style", "font-size:22px; font-weight:bold; color:darkgrey");
+	if (pageid < pagemax) {
+		pageid++;
+		click_common();
+	}
 };
 function click_buttonprev() {
-	var buttonprev = document.getElementById("prevbutton");
-	var buttonnext = document.getElementById("nextbutton");
-	if (pageid > pagemin)
+	document.getElementById("text"+pageid)
+		.setAttribute("style", "font-size:22px; font-weight:bold; color:darkgrey");
+	if (pageid > pagemin) {
 		pageid--;
-	pagename = pageprefix + pageid + ".html";
-	document.getElementById("ifm").src = pagename;
-	if (pageid == pagemin) {
-		buttonprev.disabled = true;
-	} else {
-		buttonprev.disabled = false;
-	};
-	if (pageid == pagemax) {
-		buttonnext.disabled = true;
-	} else {
-		buttonnext.disabled = false;
-	};
+		click_common();
+	}
 };
 </script>
 <div style="margin-top:20px; margin-left:30px">
 <h1 style="text-align:left; font-size:35px">The Trends of Lung and Bronchus Cancer and The Reason behind it</h1>
-<p style="font-size:20px">Here shows the annual diagnosed incidents of lung and bronchus cancer in United States, from year 1975 to 2016.<br>
+<p style="font-size:20px">Here shows the annual diagnosed incidents of Lung and Bronchus Cancer in the United States, from year 1975 to 2016.<br>
 And we are going to figure out the reason behind the change.</p>
 <div class="navlayer" >
-<button id="prevbutton" name="prevbutton" type="button" style="font-size:18px" onclick="click_buttonprev()" disabled> Prev </button>  
-<button id="nextbutton" name="nextbutton" type="button" style="font-size:18px" onclick="click_buttonnext()"> Next </button>
+<button id="prevbutton" name="prevbutton" type="button" style="font-size:18px" onclick="click_buttonprev()" disabled><b><</b> Prev </button>
+<script>
+for (var i = 1; i <= pagemax; i++) { 
+	document.write(" <text id=\"text" + i + "\" style=\"font-size:22px; font-weight:bold; color:darkgrey\">   " + i + "   </text>");
+}
+document.getElementById("text1").setAttribute("style", "font-size:22px; font-weight:bold; color:black");
+
+</script>
+<button id="nextbutton" name="nextbutton" type="button" style="font-size:18px" onclick="click_buttonnext()"> Next <b>></b></button>
 </div>
 </div>
 <iframe name="ifm" id="ifm" scrolling="auto" style="background-color: transparent;" marginwidth="0" marginheight="0" frameborder="0" width="100%" height="70%" src="chart1.html">

@@ -13,9 +13,9 @@ rect:hover {  fill:blue; }
 <div style="margin-left:30px; width:300px; height:100%; float:left">
 <h2>Lung/Bronchus Cancer and Age</h2>
 <p>First we would like to take into consideration the factor: <b>AGE</b></p>
-<p>Here is figure showing how much odds that one person can might get lung or bronchus cancer at a certain <b>age</b>, in terms of Number of Incidents per 100,000.</p>
+<p>Here is a graph showing how much odds that one person might get Lung/Bronchus Cancer at a certain <b>age</b>, in terms of Number of Incidents per 100,000.</p>
 <p>We can infer from that, the rate is quite low under 40, but it rises dramatically after 40 years old, and reaches its peak over 80.</p>
-<p>How is this related to Lung/Bronchus trends? <br>Click <b>Next</b> to find out more.</p>
+<p>How is this related to Lung/Bronchus Cancer trends? <br>Click <b>Next</b> to find out more.</p>
 <p>You can also <b>MouseOver</b> the bars for findout detailed info.</p>
 </div>
 <div style="margin-left:30px; height:100%; float:left">
@@ -74,7 +74,7 @@ async function init() {
 	myfooter.append("text")
 		.style("font-weight", "bold")
 		.style("font-size", "16px")
-		.text("Lung/Bronchus Diagnosed Rate at different Ages, incidents per 100'000");
+		.text("Lung/Bronchus Cancer Diagnosed Rate at different Ages, incidents per 100'000");
 		
 	// Create histogram
 	var bars = mysvg.selectAll(".bar")
@@ -85,12 +85,15 @@ async function init() {
 		.attr("class", "bar");		
 	bars.append("rect")
 		.attr("x", function(d) { return x(d.age)+2; })
-		.attr("y", function(d) { return y(d.value); })
+		.attr("y", y(0))
 		.attr("width", x.step()-4)
-		.attr("height", function(d) { return innerheight - y(d.value); })
+		.attr("height", 0)
 		.attr('fill', nsclc_color)
 		.on("mouseover",mouseover)
 		.on("mouseout", function() { myfocus.style("display", "none"); });
+	bars.select("rect").transition().duration(500)
+		.attr("y", function(d) { return y(d.value); })
+		.attr("height", function(d) { return innerheight - y(d.value); })
 	// Create focus cursor
 	var myfocus = mysvg.append("g")
 		.style("display", "none")

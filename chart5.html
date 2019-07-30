@@ -5,14 +5,14 @@
 <div style="margin-top:5px">
 <div style="margin-left:30px; width:300px; height:100%; float:left">
 <h2>Smoking Rate: 1955-2015</h2>
-<p>As we have already known the correlation between Smoking and Lung/Bronchus Cancer Rate. Here we continue to show the Smoking Rate Change during the past 6 decades, <b>from 1955 to 2015</b>.</p>
+<p>As we have already known the correlation between Smoking and Lung/Bronchus Cancer Rate. Here we continue to show the Smoking Rate Change during the past 6 decades, <b>from 1955 to 2015</b> (Counted as annual gross Cigarettes Per Capita).</p>
 <p>We can see there is a rise in Smoking Rate during the first 1-2 decades, <b>peaking around 1965-1975</b>. Then gradually drop.</p>
-From the graph, we can see there is a gap between Smoking Peak and the peak of Lung/Bronchus cancer, this is expected because normally there will be around 20 years after a smoker first smoke and before smoking can finally lead to Lung/Bronchus cancer.</p>
+From the graph, we can see there is <b>a gap between Smoking Peak and the peak of Lung/Bronchus cancer</b>, this is expected because normally there will be around <b>20 years</b> after a smoker first smoke and before smoking can finally lead to Lung/Bronchus Cancer.</p>
 <p>Details can be obtained through <b>MouseOver</b> the line.</p>
-<p>What can we draw from these graphs? Click <b>Next</b> to find out.
+<p>What can we conclude from these graphs? Click <b>Next</b> to continue.
 </div>
 <div style="margin-left:30px; height:100%; float:left">
-<svg width=1000 height=550>
+<svg width=850 height=500>
 </svg>
 <script>
 async function init() {
@@ -26,9 +26,9 @@ async function init() {
 	({year:year, value:parseFloat(per_capital)})), 
 	{x:"Year", y: "Cigarettes Per Capital"});	
 
-	var height = 550;
-	var width = 1000;
-	var margin1 = ({top: 100, right: 120, bottom: 100, left: 90});
+	var height = 500;
+	var width = 850;
+	var margin1 = ({top: 60, right: 120, bottom: 100, left: 90});
 	var innerwidth = width - margin1.left - margin1.right;
 	var innerheight = height - margin1.top - margin1.bottom;
 	
@@ -120,7 +120,7 @@ async function init() {
 		.style("font-weight", "bold")
 		.style("font-size", "16px")
 		.attr("text-anchor", "center")
-		.text("Smoking Rate: Cigarettes Per Capita: 1955-2016");
+		.text("Smoking Rate: Annual Cigarettes Per Capita: 1955-2016");
 	var footer_nsclc_x = margin1.left + innerwidth/2 - 140;
 	var footer_nsclc_y = height - margin1.bottom + 70;
 	var myfooter_nsclc = mysvg.append("g")
@@ -173,20 +173,20 @@ async function init() {
 		.style("font-size", "14px")
 		.style("fill", nsclc_color);
 	var path_smoke = mysvg.append("path")
-		  .datum(data_smoke)
-		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
-		  .attr("fill", "none")
-		  .attr("stroke", smoke_color)
-		  .attr("stroke-width", 4)
-		  .attr("stroke-linejoin", "miter")
-		  .attr("stroke-linecap", "square")
-		  .attr("d", line_smoke)
-		  .attr("id", "path_smoke")
-		  .style("pointer-events", "all")
-		  .style("opacity", 1)
-		  .on("mouseover", function() { myfocus.style("display", null); })
-		  .on("mouseout", function() { myfocus.style("display", "none"); })
-		  .on("mousemove", mousemove);
+		.datum(data_smoke)
+		.attr("transform", "translate("+margin1.left+","+margin1.top+")")
+		.attr("fill", "none")
+		.attr("stroke", smoke_color)
+		.attr("stroke-width", 4)
+		.attr("stroke-linejoin", "miter")
+		.attr("stroke-linecap", "square")
+		.attr("d", line_smoke)
+		.attr("id", "path_smoke")
+		.style("pointer-events", "all")
+		.style("opacity", 1)
+		.on("mouseover", function() { myfocus.style("display", null); })
+		.on("mouseout", function() { myfocus.style("display", "none"); })
+		.on("mousemove", mousemove);
 	var dot_smoke = mysvg
 		.selectAll(".dot1")
 		.data(data_smoke)
@@ -197,18 +197,20 @@ async function init() {
 		.style("fill", smoke_color)
 		.attr("cx", function(d, i) { return x_smoke(d.year) })
 		.attr("cy", function(d) { return y_smoke(d.value) })
+		.style("opacity", 0)
 		.attr("r", 4);
 	var path_nsclc = mysvg.append("path")
-		  .datum(data_nsclc)
-		  .attr("transform", "translate("+margin1.left+","+margin1.top+")")
-		  .attr("fill", "none")
-		  .attr("stroke", nsclc_color)
-		  .attr("stroke-width", 1)
-		  .attr("stroke-linejoin", "miter")
-		  .attr("stroke-linecap", "square")
-		  .attr("stroke-dasharray", "3,3")
-		  .attr("d", line_nsclc)
-		  .attr("id", "path_nsclc")
+		.datum(data_nsclc)
+		.attr("transform", "translate("+margin1.left+","+margin1.top+")")
+		.attr("fill", "none")
+		.attr("stroke", nsclc_color)
+		.attr("stroke-width", 1)
+		.attr("stroke-linejoin", "miter")
+		.attr("stroke-linecap", "square")
+		.attr("stroke-dasharray", "3,3")
+		.attr("d", line_nsclc)
+		.attr("id", "path_nsclc")
+		.style("opacity", 1);
 	var dot_nsclc = mysvg
 		.selectAll(".dot2")
 		.data(data_nsclc)
@@ -219,8 +221,24 @@ async function init() {
 		.style("fill", nsclc_color)
 		.attr("cx", function(d, i) { return x_nsclc(d.year) })
 		.attr("cy", function(d) { return y_nsclc(d.value) })
-		.attr("r", 2);
-	//path_smoke.transition().duration(2000).ease(d3.easeLinear).style("opacity", 1)
+		.attr("r", 2)
+		.style("opacity", 0);
+	var len_smoke = path_smoke.node().getTotalLength();
+	path_smoke.attr("stroke-dasharray", len_smoke+" "+len_smoke)
+	.attr("stroke-dashoffset", len_smoke)
+	.transition()
+	.duration(1000)
+	.ease(d3.easeLinear)
+	.attr("stroke-dashoffset", 0);
+	var len_nsclc = path_nsclc.node().getTotalLength();
+	path_nsclc.attr("stroke-dasharray", len_nsclc+" "+len_nsclc)
+	.attr("stroke-dashoffset", len_nsclc)
+	.transition()
+	.duration(1000)
+	.ease(d3.easeLinear)
+	.attr("stroke-dashoffset", 0);	
+	dot_smoke.transition().duration(1200).ease(d3.easeExpIn).style("opacity", 1);
+	dot_nsclc.transition().duration(1200).ease(d3.easeExpIn).style("opacity", 1);
 	
 	var bisectYear = d3.bisector(function(d) { return d.year; }).left;
 	function mousemove() {
@@ -267,7 +285,7 @@ async function init() {
 			myfocus.select("text.y2")
 				.attr("transform", "translate(" + x_smoke(d.year) + "," + y_smoke(d.value) + ")")
 				.attr("dy", "0em")
-				.text("Cigars Per Capita: " + d.value);
+				.text("Cigarettes: " + d.value);
 			myfocus.select("text.y3")
 				.attr("transform", "translate(" + x_smoke(d.year) + "," + y_smoke(d.value) + ")")
 				.attr("dy", "1.2em")
@@ -282,6 +300,50 @@ async function init() {
 			.attr("x2", 2 * innerwidth);
 		myfocus.select("circle.y")
 			.attr("transform", "translate(" + x_smoke(d.year) + "," + y_smoke(d.value) + ")");
+	}
+	// Retrieve peak value and draw it.	
+	var peakarr = [({data:data_nsclc, x:x_nsclc, y:y_nsclc, 
+		color:nsclc_color, circle_w:1, circle_r:6, font_w:"normal"}), 
+		({data:data_smoke, x:x_smoke, y:y_smoke, color:smoke_color, 
+		circle_w:2, circle_r:8, font_w:"bold"})];
+	for (var i in [1,2]) {
+		var data = peakarr[i].data;
+		var x = peakarr[i].x;
+		var y = peakarr[i].y;
+		var colorp = peakarr[i].color;
+		var circle_r = peakarr[i].circle_r;
+		var circle_w = peakarr[i].circle_w;
+		var font_w = peakarr[i].font_w;
+		var dmax = ({year: 2000, value: 60});
+		dmax.value = d3.max(data, d => d.value);
+		dmax.year = 2000;
+		data.forEach(function(d) {
+			if (d.value == dmax.value) {
+				dmax.year = d.year;
+				return;
+			}
+		});
+		var mypeak = mysvg.append("g")
+			.attr("transform", "translate("+margin1.left+","+margin1.top+")")
+		mypeak.append("circle")
+			.attr("transform", "translate(" + x(dmax.year) + "," + y(dmax.value) + ")")
+			.style("stroke", colorp)
+			.style("stroke-width", circle_w)
+			.style("fill", "none")
+			.attr("r", circle_r);
+		mypeak.append("line")
+			.attr("transform", "translate(" + x(dmax.year) + "," + y(dmax.value) + ")")
+			.style("stroke", colorp)
+			.style("stroke-dasharray", "3,3")
+			.style("opacity", 0.5)
+			.attr("y1", 0)
+			.attr("y2", innerheight - y(dmax.value));
+		mypeak.append("text")
+			.attr("transform", "translate(" + x(dmax.year) + "," + y(dmax.value) + ")")
+			.attr("dx", 8+circle_r+circle_w)
+			.attr("dy", 5)
+			.style("fill", colorp)
+			.text("Peak:" + dmax.year);
 	}
 }
 </script>
