@@ -193,7 +193,6 @@ async function init() {
 		.attr("stroke-width", 1)
 		.attr("stroke-linejoin", "miter")
 		.attr("stroke-linecap", "square")
-		.attr("stroke-dasharray", "3,3")
 		.attr("d", line_nsclc)
 		.attr("id", "path_nsclc")
 		.style("opacity", 1);
@@ -222,7 +221,6 @@ async function init() {
 	.transition()
 	.duration(1000)
 	.ease(d3.easeLinear)
-	.attr("stroke-dasharray", "3,3")
 	.attr("stroke-dashoffset", 0);
 	dot_life.transition().duration(1200).ease(d3.easeExpIn).style("opacity", 1);
 	dot_nsclc.transition().duration(1200).ease(d3.easeExpIn).style("opacity", 1);
