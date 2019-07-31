@@ -343,7 +343,7 @@ async function init() {
 			.attr("dx", 8+circle_r+circle_w)
 			.attr("dy", 5)
 			.style("fill", colorp)
-			.text("Peak:" + dmax.year);
+			.text("Peak Year:" + dmax.year);
 		mypeak.transition().duration(1500).ease(d3.easeExpIn).style("opacity", 1);
 	}
 }
