@@ -53,12 +53,12 @@ function click_buttonid(buttonid) {
 <p style="font-size:20px">Here shows the annual diagnosed incidents of Lung and Bronchus Cancer in United States, from year 1975 to 2016.<br>
 And we are going to figure out the reason behind the change.</p>
 <div class="navlayer" >
-<button id="prevbutton" name="prevbutton" type="button" style="font-size:18px" onclick="click_buttonprev()" disabled><b><</b> Prev </button><script>
+<button id="prevbutton" name="prevbutton" type="button" style="font-size:18px" onclick="click_buttonprev()" disabled><b>&lt;</b> Prev </button><script>
 for (var i = 1; i <= pagemax; i++) { 
 	document.write("<button id=\"button" + i + "\" style=\"font-size:18px\" onclick=\"click_buttonid(" + i + ")\">" + i + "</button>");
 }
 document.getElementById("button1").disabled = true;
-</script><button id="nextbutton" name="nextbutton" type="button" style="font-size:18px" onclick="click_buttonnext()"> Next <b>></b></button>
+</script><button id="nextbutton" name="nextbutton" type="button" style="font-size:18px" onclick="click_buttonnext()"> Next <b>&gt;</b></button>
 </div>
 </div>
 <iframe name="ifm" id="ifm" scrolling="auto" style="background-color: transparent;" marginwidth="0" marginheight="0" frameborder="0" width="100%" height="70%" src="chart1.html">
