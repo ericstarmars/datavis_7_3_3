@@ -268,6 +268,52 @@ async function init() {
 		myfocus.select("circle.y")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")");
 	}
+	// Retrieve peak value and draw it.	
+	var peakarr = [({data:data_nsclc, x:x_nsclc, y:y_nsclc, 
+		color:nsclc_color, circle_w:1, circle_r:6, font_w:"normal"}), 
+		({data:data_life, x:x_life, y:y_life, color:life_color, 
+		circle_w:2, circle_r:8, font_w:"bold"})];
+	for (var i in [1,2]) {
+		var data = peakarr[i].data;
+		var x = peakarr[i].x;
+		var y = peakarr[i].y;
+		var colorp = peakarr[i].color;
+		var circle_r = peakarr[i].circle_r;
+		var circle_w = peakarr[i].circle_w;
+		var font_w = peakarr[i].font_w;
+		var dmax = ({year: 2000, value: 60});
+		dmax.value = d3.max(data, d => d.value);
+		dmax.year = 2000;
+		data.forEach(function(d) {
+			if (d.value == dmax.value) {
+				dmax.year = d.year;
+				return;
+			}
+		});
+		var mypeak = mysvg.append("g")
+			.attr("transform", "translate("+margin1.left+","+margin1.top+")")
+			.style("opacity", 0);
+		mypeak.append("circle")
+			.attr("transform", "translate(" + x(dmax.year) + "," + y(dmax.value) + ")")
+			.style("stroke", colorp)
+			.style("stroke-width", circle_w)
+			.style("fill", "none")
+			.attr("r", circle_r);
+		mypeak.append("line")
+			.attr("transform", "translate(" + x(dmax.year) + "," + y(dmax.value) + ")")
+			.style("stroke", colorp)
+			.style("stroke-dasharray", "3,3")
+			.style("opacity", 0.5)
+			.attr("y1", 0)
+			.attr("y2", innerheight - y(dmax.value));
+		mypeak.append("text")
+			.attr("transform", "translate(" + x(dmax.year) + "," + y(dmax.value) + ")")
+			.attr("dx", -(35+circle_r+circle_w))
+			.attr("dy", -(5+circle_r+circle_w))
+			.style("fill", colorp)
+			.text("Peak Year:" + dmax.year);
+		mypeak.transition().duration(1500).ease(d3.easeExpIn).style("opacity", 1);
+	}
 }
 </script>
 </div>

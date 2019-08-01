@@ -340,8 +340,8 @@ async function init() {
 			.attr("y2", innerheight - y(dmax.value));
 		mypeak.append("text")
 			.attr("transform", "translate(" + x(dmax.year) + "," + y(dmax.value) + ")")
-			.attr("dx", 8+circle_r+circle_w)
-			.attr("dy", 5)
+			.attr("dx", -(35+circle_r+circle_w))
+			.attr("dy", -(5+circle_r+circle_w))
 			.style("fill", colorp)
 			.text("Peak Year:" + dmax.year);
 		mypeak.transition().duration(1500).ease(d3.easeExpIn).style("opacity", 1);
