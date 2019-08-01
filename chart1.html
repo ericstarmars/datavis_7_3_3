@@ -209,24 +209,26 @@ async function init() {
 		.style("stroke-dasharray", "3,3")
 		.style("opacity", 0.5)
 		.attr("x1", innerwidth)
-		.attr("x2", 2 * innerwidth);;		
+		.attr("x2", 2 * innerwidth);
+	var text_xpos = x(dmax.year) - 60;
+	var text_ypos = (y(dmax.value)-30);
 	mypeak.append("text")
-		.attr("transform", "translate(" + x(dmax.year) + "," + y(dmax.value) + ")")
+		.attr("transform", "translate(" + text_xpos + "," + text_ypos + ")")
 		.attr("dx", 20)
-		.attr("dy", "-1.2em")
+		.attr("dy", "-1.0em")
 		.style("font-weight", "bold")
 		.style("fill", peak_color)
 		.text("Peak Point");
 	mypeak.append("text")
-		.attr("transform", "translate(" + x(dmax.year) + "," + y(dmax.value) + ")")
+		.attr("transform", "translate(" + text_xpos + "," + text_ypos + ")")
 		.attr("dx", 20)
 		.attr("dy", "0em")
 		.style("fill", peak_color)
 		.text("Year: " + dmax.year);
 	mypeak.append("text")
-		.attr("transform", "translate(" + x(dmax.year) + "," + y(dmax.value) + ")")
+		.attr("transform", "translate(" + text_xpos + "," + text_ypos + ")")
 		.attr("dx", 20)
-		.attr("dy", "1.2em")
+		.attr("dy", "1.0em")
 		.style("fill", peak_color)
 		.text("Incident rate: " + dmax.value);
 	mypeak.transition().duration(1500).ease(d3.easeExpIn).style("opacity", 1);
