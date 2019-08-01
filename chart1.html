@@ -162,10 +162,10 @@ async function init() {
 		};
 		myfocus.select("text.y1")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
-			.text("Incident rate: " + d.value);
+			.text("Year: " + d.year);
 		myfocus.select("text.y2")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
-			.text("Year: " + d.year);
+			.text("Incident rate: " + d.value);
 		myfocus.select("line.x")
 			.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")")
 			.attr("y2", innerheight - y(d.value));
